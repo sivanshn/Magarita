@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vermisst du mich?</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=6">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+</head>
+<body>
+
+    <!-- Floating cherry blossom canvas -->
+    <canvas id="petals-canvas"></canvas>
+
+    <!-- Ambient glow orbs -->
+    <div class="glow-bg-orb orb-1"></div>
+    <div class="glow-bg-orb orb-2"></div>
+    <div class="glow-bg-orb orb-3"></div>
+
+    <!-- =====================================================================
+         PASSWORT-GATE
+         Das Passwort kannst du in script.js ändern (Zeile mit SITE_PASSWORD).
+         ===================================================================== -->
+    <div class="pw-overlay" id="pw-overlay">
+        <div class="pw-card glass-card">
+            <div class="pw-flower">🌸</div>
+            <h2 class="pw-title text-glow">Diese Seite ist nur für dich</h2>
+            <p class="pw-hint">Gib das Passwort ein, um fortzufahren</p>
+
+            <div class="pw-input-wrap" id="pw-input-wrap">
+                <input
+                    type="password"
+                    id="pw-input"
+                    class="pw-input"
+                    placeholder="Passwort..."
+                    autocomplete="off"
+                    maxlength="40"
+                >
+                <button class="btn btn-primary pw-submit-btn" id="pw-submit">
+                    Weiter 🌸
+                </button>
+            </div>
+
+            <p class="pw-error" id="pw-error">Falsches Passwort 🍂</p>
+        </div>
+    </div>
+
+    <!-- Final page background -->
+    <div class="bg-final-image" id="bg-final"></div>
+
+
+    <!-- Music controller & K-Pop Player -->
+    <div class="music-controller" id="music-controller">
+        <!-- Floating Toggle Button -->
+        <button id="music-toggle-btn" class="music-btn" aria-label="Musik">
+            <span class="music-icon-container">
+                <svg class="music-svg" viewBox="0 0 24 24" width="22" height="22">
+                    <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" fill="currentColor"/>
+                </svg>
+            </span>
+            <span class="music-wave">
+                <span class="wave-bar"></span>
+                <span class="wave-bar"></span>
+                <span class="wave-bar"></span>
+                <span class="wave-bar"></span>
+            </span>
+        </button>
+
+        <!-- Glassmorphic Expanded Player Panel -->
+        <div class="kpop-player-panel glass-card hidden" id="kpop-player-panel">
+            <div class="player-header">
+                <h3>K-Pop Player 📻</h3>
+                <button class="btn-close-player" id="btn-close-player" aria-label="Schließen">×</button>
+            </div>
+
+            <!-- Premium Mini TV Screen with Neon Spinning Vinyl -->
+            <div class="player-visual-area">
+                <div class="mv-screen-container" id="mv-screen-container" style="position: relative; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; background: #0c0817;">
+                    <div class="vinyl-container" id="player-vinyl">
+                        <div class="vinyl-glow"></div>
+                        <div class="vinyl">
+                            <div class="vinyl-center" style="background-image: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Song Info -->
+            <div class="song-details">
+                <div class="song-title text-glow" id="player-song-title">Chk Chk Boom</div>
+                <div class="song-artist" id="player-song-artist">Stray Kids</div>
+            </div>
+
+            <!-- Controls -->
+            <div class="player-controls">
+                <button class="ctrl-btn" id="ctrl-skip-back" title="5s zurück">
+                    <span style="font-size: 0.72rem; font-weight: 800;">-5s</span>
+                </button>
+                <button class="ctrl-btn" id="ctrl-prev" title="Zurück">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M6 6h2v12H6V6zm3.5 6l8.5 6V6l-8.5 6z"/></svg>
+                </button>
+                <button class="ctrl-btn btn-play-pause" id="ctrl-play" title="Abspielen/Pause">
+                    <!-- Play icon -->
+                    <svg class="play-icon" viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                    <!-- Pause icon (hidden by default) -->
+                    <svg class="pause-icon hidden" viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                </button>
+                <button class="ctrl-btn" id="ctrl-next" title="Weiter">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
+                </button>
+                <button class="ctrl-btn" id="ctrl-skip-forward" title="5s vor">
+                    <span style="font-size: 0.72rem; font-weight: 800;">+5s</span>
+                </button>
+            </div>
+
+            <!-- Volume & Option Toggles -->
+            <div class="player-options">
+                <!-- Progress Slider / Seekbar -->
+                <div class="progress-container" style="width: 100%; display: flex; flex-direction: column; gap: 4px; margin-bottom: 4px;">
+                    <input type="range" id="track-slider" min="0" max="100" value="0" class="vol-slider track-slider" style="width: 100%;">
+                    <div class="time-display" style="width: 100%; display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--text-secondary); padding: 0 4px; font-family: var(--font-body); font-weight: 600;">
+                        <span id="time-current">0:00</span>
+                        <span id="time-total">0:00</span>
+                    </div>
+                </div>
+                <!-- Volume Slider -->
+                <div class="volume-slider-container">
+                    <span class="vol-icon">🔊</span>
+                    <input type="range" id="vol-slider" min="0" max="100" value="50" class="vol-slider">
+                </div>
+            </div>
+
+            <!-- Playlist Selector -->
+            <div class="playlist-dropdown">
+                <button class="playlist-trigger" id="playlist-trigger">
+                    <span>Playlist anzeigen</span>
+                    <span class="arrow">▼</span>
+                </button>
+                <ul class="playlist-menu hidden" id="playlist-menu">
+                    <!-- Loaded dynamically via JS -->
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <main class="app-container">
+
+        <!-- PAGE 1 -->
+        <section class="card-section active" id="page-1">
+            <div class="glass-card">
+                <div class="image-wrapper animate-float">
+                    <img src="assets/cat_page1.png" alt="Süße Katze" class="card-image">
+                </div>
+                <h1 class="card-title text-glow">Vermisst du mich?</h1>
+
+                <!--
+                    .button-area ist der einzige Bewegungsbereich.
+                    position: relative + overflow: hidden = Buttons können NICHT raus.
+                    Alle drei Buttons liegen hier drin.
+                    "Ja" bleibt statisch unten zentriert.
+                    "Nein" und "Vielleicht" sind position:absolute und laufen innerhalb der Box.
+                -->
+                <!-- "Ja" ist AUSSERHALB der button-area → bewegt sich nie -->
+                <div class="yes-row">
+                    <button class="btn btn-primary btn-glow" id="btn-yes-1">Ja 🌸</button>
+                </div>
+
+                <!-- Nur Nein + Vielleicht sind in der button-area (overflow:hidden = Käfig) -->
+                <div class="button-area" id="page-1-button-area">
+                    <button class="btn btn-secondary btn-evade" id="btn-no-1">Nein</button>
+                    <button class="btn btn-secondary btn-evade" id="btn-maybe-1">Vielleicht</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- PAGE 2 -->
+        <section class="card-section" id="page-2">
+            <div class="glass-card">
+                <div class="image-wrapper animate-float">
+                    <img src="assets/cat_page2.png" alt="Glückliche Katze" class="card-image">
+                </div>
+                <h1 class="card-title text-glow">Ich habe dich auch sehr vermisst 😌</h1>
+                <div class="button-container justify-center">
+                    <button class="btn btn-primary btn-glow" id="btn-next-2">Weiter</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- PAGE 3 -->
+        <section class="card-section" id="page-3">
+            <div class="glass-card message-card">
+                <div class="cherry-blossom-decoration">🌸</div>
+                <div class="emotional-message-content">
+                    <p class="msg-para animate-fade-up" style="animation-delay: 0.3s;">
+                        Ich weiß, ich habe mir nie wirklich genug Mühe gegeben.
+                    </p>
+                    <p class="msg-para animate-fade-up" style="animation-delay: 1.2s;">
+                        Du hast viel mehr investiert als ich.
+                    </p>
+                    <p class="msg-para animate-fade-up" style="animation-delay: 2.1s;">
+                        Du hast fast immer zuerst geschrieben, du hast mehr gezeigt, dass dir der Kontakt wichtig ist, und ich war oft mit anderen Sachen beschäftigt.
+                    </p>
+                    <p class="msg-para msg-highlight animate-fade-up" style="animation-delay: 3.5s;">
+                        Aber du warst mir nie egal.
+                    </p>
+                    <p class="msg-para animate-fade-up" style="animation-delay: 4.8s;">
+                        Ich habe nur zu spät verstanden, wie viel du mir eigentlich bedeutest.
+                    </p>
+                </div>
+                <div class="button-container justify-center animate-fade-in" style="animation-delay: 6s; opacity: 0;">
+                    <button class="btn btn-primary btn-glow" id="btn-next-3">Okay</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- PAGE 4 -->
+        <section class="card-section" id="page-4">
+            <div class="glass-card">
+                <div class="cherry-blossom-decoration floating-flower">🌸</div>
+                <h1 class="card-title text-glow mb-large">Wollen wir langsam wieder Kontakt aufbauen?</h1>
+                <div class="button-container justify-center" id="decision-buttons">
+                    <button class="btn btn-primary btn-glow" id="btn-yes-4">Ja 🌸</button>
+                    <button class="btn btn-secondary" id="btn-no-4">Nein</button>
+                </div>
+                <div class="response-panel" id="response-panel">
+                    <div class="response-content" id="response-content-yes">
+                        <div class="response-icon">🌸</div>
+                        <p class="response-message">Das würde mich wirklich freuen. Ich will es diesmal besser machen.</p>
+                    </div>
+                    <div class="response-content" id="response-content-no">
+                        <div class="response-icon">🍂</div>
+                        <p class="response-message">Ich verstehe das. Ich wollte dir trotzdem ehrlich sagen, dass du mir nicht egal bist.</p>
+                    </div>
+                    <div class="status-indicator" id="status-indicator">
+                        <span class="status-spinner"></span>
+                        <span class="status-text">Nachricht wird gesendet...</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script src="script.js?v=6"></script>
+</body>
+</html>
