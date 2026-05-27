@@ -527,7 +527,9 @@ evadingBtns.forEach(btn => {
     btn.addEventListener("mouseenter", () => moveButtonAway(btn));
     btn.addEventListener("mousemove",  () => moveButtonAway(btn));
     btn.addEventListener("touchstart", (e) => {
-        e.preventDefault();
+        if (e.cancelable) {
+            e.preventDefault();
+        }
         moveButtonAway(btn);
     }, { passive: false });
 });
@@ -536,50 +538,29 @@ evadingBtns.forEach(btn => {
 // BUTTON CLICK ROUTING
 // =============================================================================
 
-// Helper, um Touch- und Klick-Events auf Mobilgeräten absolut verzögerungsfrei und verlässlich abzufangen
-function bindResponsiveClick(elementId, callback) {
-    const el = document.getElementById(elementId);
-    if (!el) return;
-    
-    let touchTriggered = false;
-    
-    el.addEventListener("touchstart", (e) => {
-        touchTriggered = true;
-        callback(e);
-    }, { passive: true });
-    
-    el.addEventListener("click", (e) => {
-        if (touchTriggered) {
-            touchTriggered = false;
-            return;
-        }
-        callback(e);
-    });
-}
-
 // Page 1 — Ja
-bindResponsiveClick("btn-yes-1", () => {
+document.getElementById("btn-yes-1").addEventListener("click", () => {
     answers.vermisst = "Ja";
     playMusic();
     goToPage("page-1", "page-2");
 });
 
 // Page 2 — Weiter
-bindResponsiveClick("btn-next-2", () => {
+document.getElementById("btn-next-2").addEventListener("click", () => {
     goToPage("page-2", "page-3");
 });
 
 // Page 3 — Okay
-bindResponsiveClick("btn-next-3", () => {
+document.getElementById("btn-next-3").addEventListener("click", () => {
     goToPage("page-3", "page-4");
 });
 
 // Page 4 — Ja / Nein
-bindResponsiveClick("btn-yes-4", () => {
+document.getElementById("btn-yes-4").addEventListener("click", () => {
     answers.kontakt = "Ja";
     showPage4Response("Ja");
 });
-bindResponsiveClick("btn-no-4", () => {
+document.getElementById("btn-no-4").addEventListener("click", () => {
     answers.kontakt = "Nein";
     showPage4Response("Nein");
 });
