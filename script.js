@@ -536,29 +536,50 @@ evadingBtns.forEach(btn => {
 // BUTTON CLICK ROUTING
 // =============================================================================
 
+// Helper, um Touch- und Klick-Events auf Mobilgeräten absolut verzögerungsfrei und verlässlich abzufangen
+function bindResponsiveClick(elementId, callback) {
+    const el = document.getElementById(elementId);
+    if (!el) return;
+    
+    let touchTriggered = false;
+    
+    el.addEventListener("touchstart", (e) => {
+        touchTriggered = true;
+        callback(e);
+    }, { passive: true });
+    
+    el.addEventListener("click", (e) => {
+        if (touchTriggered) {
+            touchTriggered = false;
+            return;
+        }
+        callback(e);
+    });
+}
+
 // Page 1 — Ja
-document.getElementById("btn-yes-1").addEventListener("click", () => {
+bindResponsiveClick("btn-yes-1", () => {
     answers.vermisst = "Ja";
     playMusic();
     goToPage("page-1", "page-2");
 });
 
 // Page 2 — Weiter
-document.getElementById("btn-next-2").addEventListener("click", () => {
+bindResponsiveClick("btn-next-2", () => {
     goToPage("page-2", "page-3");
 });
 
 // Page 3 — Okay
-document.getElementById("btn-next-3").addEventListener("click", () => {
+bindResponsiveClick("btn-next-3", () => {
     goToPage("page-3", "page-4");
 });
 
 // Page 4 — Ja / Nein
-document.getElementById("btn-yes-4").addEventListener("click", () => {
+bindResponsiveClick("btn-yes-4", () => {
     answers.kontakt = "Ja";
     showPage4Response("Ja");
 });
-document.getElementById("btn-no-4").addEventListener("click", () => {
+bindResponsiveClick("btn-no-4", () => {
     answers.kontakt = "Nein";
     showPage4Response("Nein");
 });
