@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Cozy Lofi / K-Pop Aesthetic Design System — v5
+   Cozy Lofi / K-Pop Aesthetic Design System — v8 (Mobile Fix)
    ========================================================================== */
 
 :root {
@@ -126,12 +126,11 @@ body {
 .playing .wave-bar:nth-child(4) { animation-delay: 0.5s; }
 @keyframes waveBounce { 0% { height: 3px; } 100% { height: 14px; } }
 
-/* Expanded K-Pop Player Card */
 .kpop-player-panel {
     width: 280px;
     padding: 20px 18px;
     border-radius: 22px;
-    background: rgba(18, 10, 28, 0.88); /* darker glass for premium readability */
+    background: rgba(18, 10, 28, 0.88);
     border: 1px solid rgba(255, 117, 160, 0.2);
     box-shadow: 0 16px 36px rgba(0, 0, 0, 0.55), 0 0 30px rgba(255, 117, 160, 0.15);
     display: flex;
@@ -181,9 +180,7 @@ body {
     width: 24px;
     height: 24px;
 }
-.btn-close-player:hover {
-    color: var(--pink-glow);
-}
+.btn-close-player:hover { color: var(--pink-glow); }
 
 .player-visual-area {
     position: relative;
@@ -197,7 +194,6 @@ body {
     background: rgba(0, 0, 0, 0.2);
 }
 
-/* Vinyl CD Styling */
 .vinyl-container {
     position: relative;
     width: 110px;
@@ -238,7 +234,6 @@ body {
     border: 3px solid #1c1822;
 }
 
-/* Grooves on vinyl */
 .vinyl::before {
     content: '';
     position: absolute;
@@ -269,18 +264,12 @@ body {
     transition: background 0.5s ease;
 }
 
-/* Spinning Vinyl animation */
-.playing .vinyl {
-    animation: rotateVinyl 8s linear infinite;
-}
+.playing .vinyl { animation: rotateVinyl 8s linear infinite; }
 
-/* Mini TV / YouTube video screen overlay */
 .mv-screen-container {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
     background: #000;
     z-index: 10;
     border-radius: 12px;
@@ -290,19 +279,6 @@ body {
     transition: opacity 0.4s ease, transform 0.4s ease;
 }
 
-/* Hidden MV Container (remains playing offscreen) */
-.mv-screen-container.hidden-mv {
-    position: absolute;
-    left: -9999px;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 0.001; /* tiny opacity to ensure browser keeps rendering it */
-    pointer-events: none;
-    z-index: -9999;
-}
-
-/* CRT scanlines effect for MV Screen */
 .mv-screen-container::after {
     content: " ";
     display: block;
@@ -314,11 +290,7 @@ body {
     pointer-events: none;
 }
 
-/* Song Info */
-.song-details {
-    width: 100%;
-    text-align: center;
-}
+.song-details { width: 100%; text-align: center; }
 
 .song-details .song-title {
     font-family: var(--font-headers);
@@ -339,21 +311,6 @@ body {
     text-overflow: ellipsis;
 }
 
-.player-status-badge {
-    font-size: 0.68rem;
-    padding: 3px 10px;
-    border-radius: 20px;
-    background: rgba(255, 255, 255, 0.05);
-    color: var(--text-secondary);
-    margin-top: 6px;
-    display: inline-block;
-    font-weight: 600;
-    letter-spacing: 0.03em;
-    border: 1px solid rgba(255,255,255,0.05);
-    transition: all 0.3s ease;
-}
-
-/* Playback controls */
 .player-controls {
     display: flex;
     justify-content: center;
@@ -381,9 +338,7 @@ body {
     color: #fff;
     transform: scale(1.08);
 }
-.ctrl-btn:active {
-    transform: scale(0.95);
-}
+.ctrl-btn:active { transform: scale(0.95); }
 
 .btn-play-pause {
     width: 48px;
@@ -393,15 +348,9 @@ body {
     border: none;
     box-shadow: 0 4px 10px rgba(255,117,160,0.3);
 }
-.btn-play-pause:hover {
-    box-shadow: 0 6px 15px rgba(255,117,160,0.5);
-    transform: scale(1.08);
-}
-.btn-play-pause .hidden {
-    display: none;
-}
+.btn-play-pause:hover { box-shadow: 0 6px 15px rgba(255,117,160,0.5); transform: scale(1.08); }
+.btn-play-pause .hidden { display: none; }
 
-/* Volume Slider & Toggle MV */
 .player-options {
     width: 100%;
     display: flex;
@@ -419,9 +368,7 @@ body {
     gap: 10px;
 }
 
-.vol-icon {
-    font-size: 0.9rem;
-}
+.vol-icon { font-size: 0.9rem; }
 
 .vol-slider {
     flex: 1;
@@ -433,7 +380,7 @@ body {
     outline: none;
     transition: background 0.3s;
     cursor: pointer;
-    touch-action: none; /* Verhindert das ungewollte Scrollen der Seite beim Ziehen auf dem Handy */
+    touch-action: none;
 }
 .vol-slider::-webkit-slider-thumb {
     -webkit-appearance: none;
@@ -446,39 +393,9 @@ body {
     box-shadow: 0 0 5px rgba(0,0,0,0.3);
     transition: transform 0.1s;
 }
-.vol-slider::-webkit-slider-thumb:hover {
-    transform: scale(1.25);
-}
+.vol-slider::-webkit-slider-thumb:hover { transform: scale(1.25); }
 
-.toggle-mv-btn {
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.1);
-    color: var(--text-secondary);
-    padding: 6px 12px;
-    border-radius: 12px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    width: 100%;
-}
-.toggle-mv-btn:hover {
-    background: rgba(255,117,160,0.1);
-    border-color: var(--pink-glow);
-    color: #fff;
-}
-.toggle-mv-btn.active {
-    background: linear-gradient(135deg, var(--pink-glow), var(--purple-glow));
-    color: #fff;
-    border: none;
-    box-shadow: 0 0 10px rgba(255,117,160,0.4);
-}
-
-/* Playlist Dropdown */
-.playlist-dropdown {
-    width: 100%;
-    position: relative;
-}
+.playlist-dropdown { width: 100%; position: relative; }
 
 .playlist-trigger {
     width: 100%;
@@ -499,14 +416,8 @@ body {
     background: rgba(255, 255, 255, 0.08);
     border-color: rgba(255, 255, 255, 0.15);
 }
-
-.playlist-trigger .arrow {
-    font-size: 0.65rem;
-    transition: transform 0.3s ease;
-}
-.playlist-trigger.open .arrow {
-    transform: rotate(180deg);
-}
+.playlist-trigger .arrow { font-size: 0.65rem; transition: transform 0.3s ease; }
+.playlist-trigger.open .arrow { transform: rotate(180deg); }
 
 .playlist-menu {
     position: absolute;
@@ -524,9 +435,7 @@ body {
     z-index: 120;
     backdrop-filter: blur(10px);
 }
-.playlist-menu.hidden {
-    display: none;
-}
+.playlist-menu.hidden { display: none; }
 
 .playlist-item {
     padding: 8px 10px;
@@ -539,45 +448,20 @@ body {
     border-bottom: 1px solid rgba(255,255,255,0.03);
     text-align: left;
 }
-.playlist-item:last-child {
-    border-bottom: none;
-}
-.playlist-item:hover {
-    background: rgba(255, 117, 160, 0.1);
-}
+.playlist-item:last-child { border-bottom: none; }
+.playlist-item:hover { background: rgba(255, 117, 160, 0.1); }
 .playlist-item.active {
     background: rgba(255, 117, 160, 0.18);
     border: 1px solid rgba(255, 117, 160, 0.3);
 }
+.playlist-item .song-name { font-size: 0.8rem; font-weight: 700; color: #fff; }
+.playlist-item.active .song-name { color: var(--pink-glow); }
+.playlist-item .song-artist { font-size: 0.7rem; color: var(--text-secondary); }
 
-.playlist-item .song-name {
-    font-size: 0.8rem;
-    font-weight: 700;
-    color: #fff;
-}
-.playlist-item.active .song-name {
-    color: var(--pink-glow);
-}
-
-.playlist-item .song-artist {
-    font-size: 0.7rem;
-    color: var(--text-secondary);
-}
-
-/* Scrollbar styling for playlist */
-.playlist-menu::-webkit-scrollbar {
-    width: 4px;
-}
-.playlist-menu::-webkit-scrollbar-track {
-    background: transparent;
-}
-.playlist-menu::-webkit-scrollbar-thumb {
-    background: rgba(255, 117, 160, 0.3);
-    border-radius: 2px;
-}
-.playlist-menu::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 117, 160, 0.5);
-}
+.playlist-menu::-webkit-scrollbar { width: 4px; }
+.playlist-menu::-webkit-scrollbar-track { background: transparent; }
+.playlist-menu::-webkit-scrollbar-thumb { background: rgba(255, 117, 160, 0.3); border-radius: 2px; }
+.playlist-menu::-webkit-scrollbar-thumb:hover { background: rgba(255, 117, 160, 0.5); }
 
 /* ==========================================================================
    App Container & Pages
@@ -593,24 +477,24 @@ body {
     position: absolute;
     width: 90%; max-width: 500px;
     opacity: 0;
-    visibility: hidden; /* Standardmäßig unsichtbar und blockiert garantiert keine Klicks */
+    visibility: hidden;
     pointer-events: none;
     transform: translateY(30px) scale(0.95);
     transition: opacity 0.8s cubic-bezier(0.25,1,0.5,1), transform 0.8s cubic-bezier(0.25,1,0.5,1), visibility 0.8s;
     z-index: 5;
 }
-.card-section.active { 
-    opacity: 1; 
-    visibility: visible; /* Sichtbar im aktiven Zustand */
-    pointer-events: auto; 
-    transform: translateY(0) scale(1); 
-    z-index: 10; 
+.card-section.active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0) scale(1);
+    z-index: 10;
 }
-.card-section.fade-out { 
-    opacity: 0; 
-    visibility: hidden; /* Unsichtbar bei Übergang */
-    pointer-events: none; 
-    transform: translateY(-30px) scale(0.95); 
+.card-section.fade-out {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(-30px) scale(0.95);
 }
 
 .glass-card {
@@ -702,7 +586,7 @@ body {
 }
 .btn-secondary:hover { background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.25); color: var(--text-primary); }
 
-/* "Ja" Zeile — statisch, immer sichtbar, nie bewegt */
+/* "Ja" Zeile — statisch, nie bewegt */
 .yes-row {
     display: flex;
     justify-content: center;
@@ -712,18 +596,13 @@ body {
 
 /* ==========================================================================
    PAGE 1 — Button Area (Fluchtzone für Nein + Vielleicht)
-
-   position: relative  → Referenzpunkt für absolute Kinder
-   overflow: hidden    → ALLES was rausgeht wird ABGESCHNITTEN (Sicherheitsnetz)
-   Feste px-Größe     → definiert das Spielfeld
    ========================================================================== */
 
 .button-area {
     position: relative;
-    width: 100%;
-    max-width: 420px;
-    height: 100px;         /* Nur für Nein + Vielleicht, kein Ja mehr drin */
-    overflow: hidden;      /* ← Physische Grenze. Buttons können NICHT raus. */
+    width: 420px;
+    height: 100px;
+    overflow: hidden;
     border-radius: 14px;
     margin-bottom: 4px;
 }
@@ -794,8 +673,9 @@ body {
 .animate-fade-up { opacity: 0; transform: translateY(15px); animation: fadeUp 1s cubic-bezier(0.25,1,0.5,1) forwards; }
 @keyframes fadeUp { 100% { opacity: 1; transform: translateY(0); } }
 
-.animate-fade-in { animation: fadeIn 1s cubic-bezier(0.25,1,0.5,1) forwards; }
-@keyframes fadeIn { 100% { opacity: 1; } }
+/* FIX: opacity: 0 als Startzustand + forwards damit der Button sichtbar bleibt */
+.animate-fade-in { opacity: 0; animation: fadeIn 1s cubic-bezier(0.25,1,0.5,1) forwards; }
+@keyframes fadeIn { 0% { opacity: 0; } 100% { opacity: 1; } }
 
 @keyframes heartBeat {
     0%  { transform: scale(1); }
@@ -816,70 +696,24 @@ body {
 
     .card-title { font-size: 1.4rem; margin-bottom: 18px; }
 
-    /* Mobile Spielfeld kleiner & absolut anpassungsfähig */
+    /* Mobile: Button-Area größer damit Buttons nicht aus der Card fallen */
     .button-area {
-        width: 100%;
-        max-width: 300px;
-        height: 100px;
+        width: 300px;
+        height: 140px; /* war 100px — zu wenig Platz auf Mobile! */
     }
 
     .message-card { padding: 32px 18px; }
     .msg-para { font-size: 0.98rem; }
     .msg-highlight { font-size: 1.1rem; }
-    
-    /* Mobile controller and panel layout optimization */
-    .music-controller {
-        top: 12px;
-        right: 12px;
-        gap: 8px;
-    }
     .music-btn { padding: 8px 12px; }
-    
-    .kpop-player-panel {
-        width: calc(100vw - 24px);
-        max-width: 290px;
-        padding: 16px 12px;
-        gap: 12px;
-    }
-    
-    .player-visual-area {
-        height: 110px;
-    }
-    
-    .vinyl-container {
-        width: 90px;
-        height: 90px;
-    }
-    
-    .vinyl-center {
-        width: 32px;
-        height: 32px;
-    }
 
     .btn { font-size: 0.92rem; padding: 11px 20px; }
 
-    /* Mobile Player Buttons Touch Target Optimization */
-    .player-controls {
-        width: 100%;
-        justify-content: space-evenly;
-        gap: 6px;
-    }
-    .ctrl-btn {
-        width: 36px;
-        height: 36px;
-    }
-    .btn-play-pause {
-        width: 46px;
-        height: 46px;
-    }
-    .vol-slider::-webkit-slider-thumb {
-        width: 18px;
-        height: 18px;
-    }
-    .vol-slider::-moz-range-thumb {
-        width: 18px;
-        height: 18px;
-    }
+    .ctrl-btn { width: 42px; height: 42px; }
+    .btn-play-pause { width: 52px; height: 52px; }
+    .player-controls { gap: 12px; }
+    .vol-slider::-webkit-slider-thumb { width: 18px; height: 18px; }
+    .vol-slider::-moz-range-thumb { width: 18px; height: 18px; }
 }
 
 /* ==========================================================================
@@ -895,8 +729,6 @@ body {
     align-items: center;
     background: linear-gradient(135deg, #0e0817, #170d27);
     transition: opacity 0.7s ease, visibility 0.7s ease;
-    overflow-y: auto; /* Enable vertical scrolling if keyboard shrinks viewport */
-    padding: 20px 0;
 }
 
 .pw-overlay.hidden {
@@ -913,7 +745,6 @@ body {
     align-items: center;
     padding: 50px 36px 40px;
     animation: scaleUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
-    margin: auto; /* Preserves top scrolling on viewport overflow */
 }
 
 .pw-flower {
@@ -948,7 +779,7 @@ body {
 
 .pw-input {
     flex: 1;
-    min-width: 0; /* Erlaubt dem Input, im Flex-Container zu schrumpfen, statt die Standard-Browsergröße zu erzwingen */
+    min-width: 0;
     background: rgba(255, 255, 255, 0.07);
     border: 1px solid rgba(255, 117, 160, 0.25);
     border-radius: 50px;
@@ -981,10 +812,10 @@ body {
     80%       { transform: translateX(5px); }
 }
 
-.pw-submit-btn { 
-    flex-shrink: 0; 
-    white-space: nowrap; 
-    padding: 13px 22px; /* Leicht reduzierte Breite für optimales Alignment im Container */
+.pw-submit-btn {
+    flex-shrink: 0;
+    white-space: nowrap;
+    padding: 13px 22px;
 }
 
 .pw-error {
@@ -1003,4 +834,3 @@ body {
     .pw-input, .pw-submit-btn { width: 100%; }
     .pw-title { font-size: 1.35rem; }
 }
-
