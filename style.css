@@ -433,6 +433,7 @@ body {
     outline: none;
     transition: background 0.3s;
     cursor: pointer;
+    touch-action: none; /* Verhindert das ungewollte Scrollen der Seite beim Ziehen auf dem Handy */
 }
 .vol-slider::-webkit-slider-thumb {
     -webkit-appearance: none;
@@ -813,6 +814,27 @@ body {
     .music-btn { padding: 8px 12px; }
 
     .btn { font-size: 0.92rem; padding: 11px 20px; }
+
+    /* Mobile Player Buttons Touch Target Optimization */
+    .ctrl-btn {
+        width: 42px;
+        height: 42px;
+    }
+    .btn-play-pause {
+        width: 52px;
+        height: 52px;
+    }
+    .player-controls {
+        gap: 12px;
+    }
+    .vol-slider::-webkit-slider-thumb {
+        width: 18px;
+        height: 18px;
+    }
+    .vol-slider::-moz-range-thumb {
+        width: 18px;
+        height: 18px;
+    }
 }
 
 /* ==========================================================================

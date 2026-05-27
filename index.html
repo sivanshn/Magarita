@@ -30,7 +30,7 @@
             <h2 class="pw-title text-glow">Diese Seite ist nur für dich</h2>
             <p class="pw-hint">Gib das Passwort ein, um fortzufahren</p>
 
-            <div class="pw-input-wrap" id="pw-input-wrap">
+            <form class="pw-input-wrap" id="pw-form" action="#" onsubmit="return false;">
                 <input
                     type="password"
                     id="pw-input"
@@ -39,10 +39,10 @@
                     autocomplete="off"
                     maxlength="40"
                 >
-                <button class="btn btn-primary pw-submit-btn" id="pw-submit">
+                <button type="submit" class="btn btn-primary pw-submit-btn" id="pw-submit">
                     Weiter 🌸
                 </button>
-            </div>
+            </form>
 
             <p class="pw-error" id="pw-error">Falsches Passwort 🍂</p>
         </div>

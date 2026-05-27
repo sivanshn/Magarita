@@ -11,15 +11,13 @@ const SITE_PASSWORD = "SKY";      // ← DEIN PASSWORT
 (function initPasswordGate() {
     const overlay   = document.getElementById("pw-overlay");
     const input     = document.getElementById("pw-input");
-    const submitBtn = document.getElementById("pw-submit");
     const errorEl   = document.getElementById("pw-error");
+    const form      = document.getElementById("pw-form");
 
-    // Prüfung bei Button-Klick
-    submitBtn.addEventListener("click", checkPassword);
-
-    // Prüfung bei Enter-Taste
-    input.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") checkPassword();
+    // Zuverlässige Prüfung über Form-Submit (unterstützt Button-Klick, Enter und mobile Go-Tasten)
+    form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        checkPassword();
     });
 
     function checkPassword() {
