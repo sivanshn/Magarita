@@ -534,6 +534,30 @@ evadingBtns.forEach(btn => {
     }, { passive: false });
 });
 
+// Resize boundary guardian - adapts button positions dynamically to new area dimensions (e.g. rotation)
+window.addEventListener("resize", () => {
+    const areaW = buttonArea.clientWidth;
+    const areaH = buttonArea.clientHeight;
+
+    evadingBtns.forEach(btn => {
+        const w = btn.offsetWidth;
+        const h = btn.offsetHeight;
+        const currentLeft = parseFloat(btn.style.left) || 0;
+        const currentTop  = parseFloat(btn.style.top) || 0;
+
+        const maxX = Math.max(0, areaW - w);
+        const maxY = Math.max(0, areaH - h);
+
+        // Clamping current coordinates within the new boundary limits
+        if (currentLeft > maxX) {
+            btn.style.left = maxX + "px";
+        }
+        if (currentTop > maxY) {
+            btn.style.top = maxY + "px";
+        }
+    });
+});
+
 // =============================================================================
 // BUTTON CLICK ROUTING
 // =============================================================================

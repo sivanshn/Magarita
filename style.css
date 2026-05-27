@@ -720,7 +720,8 @@ body {
 
 .button-area {
     position: relative;
-    width: 420px;
+    width: 100%;
+    max-width: 420px;
     height: 100px;         /* Nur für Nein + Vielleicht, kein Ja mehr drin */
     overflow: hidden;      /* ← Physische Grenze. Buttons können NICHT raus. */
     border-radius: 14px;
@@ -815,30 +816,61 @@ body {
 
     .card-title { font-size: 1.4rem; margin-bottom: 18px; }
 
-    /* Mobile Spielfeld kleiner */
+    /* Mobile Spielfeld kleiner & absolut anpassungsfähig */
     .button-area {
-        width: 300px;
+        width: 100%;
+        max-width: 300px;
         height: 100px;
     }
 
     .message-card { padding: 32px 18px; }
     .msg-para { font-size: 0.98rem; }
     .msg-highlight { font-size: 1.1rem; }
+    
+    /* Mobile controller and panel layout optimization */
+    .music-controller {
+        top: 12px;
+        right: 12px;
+        gap: 8px;
+    }
     .music-btn { padding: 8px 12px; }
+    
+    .kpop-player-panel {
+        width: calc(100vw - 24px);
+        max-width: 290px;
+        padding: 16px 12px;
+        gap: 12px;
+    }
+    
+    .player-visual-area {
+        height: 110px;
+    }
+    
+    .vinyl-container {
+        width: 90px;
+        height: 90px;
+    }
+    
+    .vinyl-center {
+        width: 32px;
+        height: 32px;
+    }
 
     .btn { font-size: 0.92rem; padding: 11px 20px; }
 
     /* Mobile Player Buttons Touch Target Optimization */
+    .player-controls {
+        width: 100%;
+        justify-content: space-evenly;
+        gap: 6px;
+    }
     .ctrl-btn {
-        width: 42px;
-        height: 42px;
+        width: 36px;
+        height: 36px;
     }
     .btn-play-pause {
-        width: 52px;
-        height: 52px;
-    }
-    .player-controls {
-        gap: 12px;
+        width: 46px;
+        height: 46px;
     }
     .vol-slider::-webkit-slider-thumb {
         width: 18px;
@@ -863,6 +895,8 @@ body {
     align-items: center;
     background: linear-gradient(135deg, #0e0817, #170d27);
     transition: opacity 0.7s ease, visibility 0.7s ease;
+    overflow-y: auto; /* Enable vertical scrolling if keyboard shrinks viewport */
+    padding: 20px 0;
 }
 
 .pw-overlay.hidden {
@@ -879,6 +913,7 @@ body {
     align-items: center;
     padding: 50px 36px 40px;
     animation: scaleUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    margin: auto; /* Preserves top scrolling on viewport overflow */
 }
 
 .pw-flower {
