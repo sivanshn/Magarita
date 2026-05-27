@@ -592,6 +592,8 @@ body {
     justify-content: center;
     margin-bottom: 10px;
     width: 100%;
+    position: relative;
+    z-index: 10; /* Gewährleistet, dass der Ja-Button immer über dem Ausweich-Spielfeld liegt */
 }
 
 /* ==========================================================================
@@ -706,6 +708,10 @@ body {
     .msg-para { font-size: 0.98rem; }
     .msg-highlight { font-size: 1.1rem; }
     .music-btn { padding: 8px 12px; }
+
+    .yes-row {
+        margin-bottom: 22px; /* Erhöhter Abstand auf Mobilgeräten zur Vermeidung von Fehlberührungen */
+    }
 
     .btn { font-size: 0.92rem; padding: 11px 20px; }
 
