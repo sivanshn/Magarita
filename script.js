@@ -1,642 +1,836 @@
 /* ==========================================================================
-   Cozy Lofi Reconnection Website — script.js v6
+   Cozy Lofi / K-Pop Aesthetic Design System — v8 (Mobile Fix)
    ========================================================================== */
 
-// =============================================================================
-// PASSWORT-GATE
-// ► Das Passwort hier ändern:
-const SITE_PASSWORD = "SKY";      // ← DEIN PASSWORT
-// =============================================================================
+:root {
+    --bg-dark: #0a0612;
+    --bg-gradient-start: #0e0817;
+    --bg-gradient-end: #170d27;
+    --pink-glow: #ff75a0;
+    --pink-light: #ffd3e2;
+    --purple-glow: #b56bfa;
+    --text-primary: #ffffff;
+    --text-secondary: #d6c8e3;
+    --card-bg: rgba(25, 15, 38, 0.45);
+    --card-border: rgba(255, 117, 160, 0.12);
+    --card-shadow: 0 16px 40px rgba(0,0,0,0.4), 0 0 40px rgba(181,107,250,0.1);
+    --font-headers: 'Quicksand', sans-serif;
+    --font-body: 'Nunito', sans-serif;
+}
 
-(function initPasswordGate() {
-    const overlay   = document.getElementById("pw-overlay");
-    const input     = document.getElementById("pw-input");
-    const errorEl   = document.getElementById("pw-error");
-    const form      = document.getElementById("pw-form");
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
-    // Zuverlässige Prüfung über Form-Submit (unterstützt Button-Klick, Enter und mobile Go-Tasten)
-    form.addEventListener("submit", (e) => {
-        e.preventDefault();
-        checkPassword();
-    });
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: var(--bg-dark);
+    font-family: var(--font-body);
+    color: var(--text-primary);
+    -webkit-tap-highlight-color: transparent;
+}
 
-    function checkPassword() {
-        const entered = input.value.trim().toLowerCase();
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+    position: relative;
+}
 
-        if (entered === SITE_PASSWORD.toLowerCase()) {
-            // Richtig → Overlay sanft ausblenden
-            overlay.classList.add("hidden");
-            errorEl.classList.remove("visible");
-            // Starte Musik automatisch mit einem zufälligen K-Pop Track
-            playRandomTrack();
-        } else {
-            // Falsch → Shake + Fehlermeldung
-            input.classList.remove("shake");
-            requestAnimationFrame(() => {
-                requestAnimationFrame(() => {
-                    input.classList.add("shake");
-                });
-            });
-            errorEl.classList.add("visible");
-            input.value = "";
-            input.focus();
-            setTimeout(() => input.classList.remove("shake"), 500);
-        }
+@keyframes gradientShift {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+#petals-canvas {
+    position: absolute; top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 1; pointer-events: none;
+}
+
+.glow-bg-orb {
+    position: absolute; border-radius: 50%;
+    filter: blur(100px); opacity: 0.15; z-index: 0; pointer-events: none;
+    animation: floatOrb 20s infinite alternate ease-in-out;
+}
+.orb-1 { width: 300px; height: 300px; background-color: var(--pink-glow); top: 15%; left: 10%; }
+.orb-2 { width: 400px; height: 400px; background-color: var(--purple-glow); bottom: 10%; right: 5%; animation-delay: -5s; }
+.orb-3 { width: 250px; height: 250px; background-color: var(--pink-light); top: 60%; left: 50%; animation-delay: -10s; }
+
+@keyframes floatOrb {
+    0%   { transform: translate(0,0) scale(1); }
+    100% { transform: translate(40px,40px) scale(1.15); }
+}
+
+.bg-final-image {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background-image: url('assets/bg_lofi.png');
+    background-size: cover; background-position: center;
+    z-index: 2; opacity: 0; pointer-events: none;
+    transition: opacity 2s cubic-bezier(0.25, 1, 0.5, 1);
+}
+.bg-final-image::after {
+    content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(to top, rgba(10,6,18,0.85) 20%, rgba(10,6,18,0.35) 100%);
+}
+
+/* ==========================================================================
+   Music Controller & Expanded K-Pop Player
+   ========================================================================== */
+
+.music-controller {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 12px;
+}
+
+.music-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.12);
+    padding: 10px 14px;
+    border-radius: 50px;
+    color: var(--text-primary);
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+.music-btn:hover {
+    background: rgba(255,255,255,0.15);
+    border-color: var(--pink-glow);
+    box-shadow: 0 0 15px rgba(255,117,160,0.3);
+}
+.music-icon-container { display: flex; justify-content: center; align-items: center; }
+.music-svg { transition: transform 0.5s ease; }
+.music-btn.playing .music-svg { animation: rotateVinyl 4s linear infinite; color: var(--pink-glow); }
+@keyframes rotateVinyl { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+.music-wave { display: flex; align-items: flex-end; gap: 2.5px; height: 14px; width: 16px; }
+.wave-bar { width: 2px; height: 3px; background-color: var(--text-secondary); border-radius: 2px; transition: height 0.3s ease, background-color 0.3s ease; }
+.playing .wave-bar { background-color: var(--pink-glow); animation: waveBounce 1.2s ease infinite alternate; }
+.playing .wave-bar:nth-child(1) { animation-delay: 0.1s; }
+.playing .wave-bar:nth-child(2) { animation-delay: 0.4s; height: 14px; }
+.playing .wave-bar:nth-child(3) { animation-delay: 0.2s; }
+.playing .wave-bar:nth-child(4) { animation-delay: 0.5s; }
+@keyframes waveBounce { 0% { height: 3px; } 100% { height: 14px; } }
+
+.kpop-player-panel {
+    width: 280px;
+    padding: 20px 18px;
+    border-radius: 22px;
+    background: rgba(18, 10, 28, 0.88);
+    border: 1px solid rgba(255, 117, 160, 0.2);
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.55), 0 0 30px rgba(255, 117, 160, 0.15);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    transition: opacity 0.4s cubic-bezier(0.25, 1, 0.5, 1), transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), visibility 0.4s;
+    transform-origin: top right;
+    pointer-events: auto;
+}
+
+.kpop-player-panel.hidden {
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(0.9) translateY(-10px);
+    pointer-events: none;
+}
+
+.player-header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 8px;
+}
+
+.player-header h3 {
+    font-family: var(--font-headers);
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--pink-light);
+    margin: 0;
+}
+
+.btn-close-player {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1.4rem;
+    cursor: pointer;
+    line-height: 1;
+    transition: color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+}
+.btn-close-player:hover { color: var(--pink-glow); }
+
+.player-visual-area {
+    position: relative;
+    width: 100%;
+    height: 130px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.vinyl-container {
+    position: relative;
+    width: 110px;
+    height: 110px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.vinyl-glow {
+    position: absolute;
+    inset: -5px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,117,160,0.3) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+.playing .vinyl-glow {
+    opacity: 1;
+    animation: pulseGlow 2s infinite alternate;
+}
+@keyframes pulseGlow {
+    0% { transform: scale(0.95); opacity: 0.2; }
+    100% { transform: scale(1.15); opacity: 0.4; }
+}
+
+.vinyl {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: radial-gradient(circle, #333 20%, #111 60%, #000 100%);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5), inset 0 0 1px 1px rgba(255,255,255,0.1);
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 3px solid #1c1822;
+}
+
+.vinyl::before {
+    content: '';
+    position: absolute;
+    inset: 12px;
+    border-radius: 50%;
+    border: 1px double rgba(255, 255, 255, 0.08);
+    pointer-events: none;
+}
+.vinyl::after {
+    content: '';
+    position: absolute;
+    inset: 24px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    pointer-events: none;
+}
+
+.vinyl-center {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
+    border: 2px solid #000;
+    z-index: 2;
+    box-shadow: 0 0 5px rgba(0,0,0,0.5);
+    background-image: linear-gradient(135deg, var(--pink-glow), var(--purple-glow));
+    transition: background 0.5s ease;
+}
+
+.playing .vinyl { animation: rotateVinyl 8s linear infinite; }
+
+.mv-screen-container {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: #000;
+    z-index: 10;
+    border-radius: 12px;
+    border: 2px solid rgba(255,117,160,0.3);
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 4px 10px rgba(0,0,0,0.5);
+    overflow: hidden;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.mv-screen-container::after {
+    content: " ";
+    display: block;
+    position: absolute;
+    top: 0; left: 0; bottom: 0; right: 0;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+    z-index: 12;
+    background-size: 100% 3px, 6px 100%;
+    pointer-events: none;
+}
+
+.song-details { width: 100%; text-align: center; }
+
+.song-details .song-title {
+    font-family: var(--font-headers);
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 4px;
+}
+
+.song-details .song-artist {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.player-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+}
+
+.ctrl-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-secondary);
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    padding: 0;
+}
+.ctrl-btn:hover {
+    background: rgba(255, 117, 160, 0.15);
+    border-color: var(--pink-glow);
+    color: #fff;
+    transform: scale(1.08);
+}
+.ctrl-btn:active { transform: scale(0.95); }
+
+.btn-play-pause {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, var(--pink-glow), var(--purple-glow));
+    color: #fff;
+    border: none;
+    box-shadow: 0 4px 10px rgba(255,117,160,0.3);
+}
+.btn-play-pause:hover { box-shadow: 0 6px 15px rgba(255,117,160,0.5); transform: scale(1.08); }
+.btn-play-pause .hidden { display: none; }
+
+.player-options {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    padding-top: 12px;
+}
+
+.volume-slider-container {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.vol-icon { font-size: 0.9rem; }
+
+.vol-slider {
+    flex: 1;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(255, 255, 255, 0.15);
+    outline: none;
+    transition: background 0.3s;
+    cursor: pointer;
+    touch-action: none;
+}
+.vol-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--pink-glow);
+    cursor: pointer;
+    box-shadow: 0 0 5px rgba(0,0,0,0.3);
+    transition: transform 0.1s;
+}
+.vol-slider::-webkit-slider-thumb:hover { transform: scale(1.25); }
+
+.playlist-dropdown { width: 100%; position: relative; }
+
+.playlist-trigger {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--text-secondary);
+    padding: 8px 12px;
+    border-radius: 10px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.2s;
+}
+.playlist-trigger:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+.playlist-trigger .arrow { font-size: 0.65rem; transition: transform 0.3s ease; }
+.playlist-trigger.open .arrow { transform: rotate(180deg); }
+
+.playlist-menu {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 0;
+    width: 100%;
+    max-height: 180px;
+    overflow-y: auto;
+    background: rgba(15, 8, 25, 0.95);
+    border: 1px solid rgba(255, 117, 160, 0.2);
+    border-radius: 12px;
+    box-shadow: 0 -8px 24px rgba(0,0,0,0.6);
+    list-style: none;
+    padding: 6px;
+    z-index: 120;
+    backdrop-filter: blur(10px);
+}
+.playlist-menu.hidden { display: none; }
+
+.playlist-item {
+    padding: 8px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    text-align: left;
+}
+.playlist-item:last-child { border-bottom: none; }
+.playlist-item:hover { background: rgba(255, 117, 160, 0.1); }
+.playlist-item.active {
+    background: rgba(255, 117, 160, 0.18);
+    border: 1px solid rgba(255, 117, 160, 0.3);
+}
+.playlist-item .song-name { font-size: 0.8rem; font-weight: 700; color: #fff; }
+.playlist-item.active .song-name { color: var(--pink-glow); }
+.playlist-item .song-artist { font-size: 0.7rem; color: var(--text-secondary); }
+
+.playlist-menu::-webkit-scrollbar { width: 4px; }
+.playlist-menu::-webkit-scrollbar-track { background: transparent; }
+.playlist-menu::-webkit-scrollbar-thumb { background: rgba(255, 117, 160, 0.3); border-radius: 2px; }
+.playlist-menu::-webkit-scrollbar-thumb:hover { background: rgba(255, 117, 160, 0.5); }
+
+/* ==========================================================================
+   App Container & Pages
+   ========================================================================== */
+
+.app-container {
+    width: 100%; height: 100%;
+    display: flex; justify-content: center; align-items: center;
+    position: relative; z-index: 10;
+}
+
+.card-section {
+    position: absolute;
+    width: 90%; max-width: 500px;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(30px) scale(0.95);
+    transition: opacity 0.8s cubic-bezier(0.25,1,0.5,1), transform 0.8s cubic-bezier(0.25,1,0.5,1), visibility 0.8s;
+    z-index: 5;
+}
+.card-section.active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0) scale(1);
+    z-index: 10;
+}
+.card-section.fade-out {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(-30px) scale(0.95);
+}
+
+.glass-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    backdrop-filter: blur(25px) saturate(120%);
+    -webkit-backdrop-filter: blur(25px) saturate(120%);
+    border-radius: 28px;
+    padding: 40px 30px;
+    box-shadow: var(--card-shadow);
+    display: flex; flex-direction: column; align-items: center; text-align: center;
+    position: relative; overflow: visible;
+}
+.glass-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    border-radius: 28px; padding: 1px;
+    background: linear-gradient(135deg, rgba(255,117,160,0.25), rgba(181,107,250,0.05), rgba(255,117,160,0.05), rgba(181,107,250,0.25));
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor; mask-composite: exclude;
+    pointer-events: none; z-index: -1;
+}
+
+/* ==========================================================================
+   Images & Typography
+   ========================================================================== */
+
+.image-wrapper {
+    width: 210px; height: 210px; border-radius: 22px; overflow: hidden;
+    margin-bottom: 22px;
+    border: 2px solid rgba(255,117,160,0.2);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.3), 0 0 20px rgba(255,117,160,0.15);
+    background-color: rgba(25,15,38,0.3);
+}
+.card-image { width: 100%; height: 100%; object-fit: cover; }
+
+.card-title {
+    font-family: var(--font-headers); font-size: 1.75rem; font-weight: 700;
+    line-height: 1.35; margin-bottom: 28px; color: var(--text-primary);
+}
+.text-glow { text-shadow: 0 0 12px rgba(255,117,160,0.4), 0 0 24px rgba(181,107,250,0.2); }
+.mb-large { margin-bottom: 35px; }
+.justify-center { justify-content: center !important; }
+
+.cherry-blossom-decoration {
+    font-size: 2.2rem; margin-bottom: 15px;
+    filter: drop-shadow(0 0 8px rgba(255,117,160,0.5));
+}
+.floating-flower { animation: floatItem 3s ease-in-out infinite alternate; }
+
+/* ==========================================================================
+   Button Base Styles
+   ========================================================================== */
+
+.button-container {
+    width: 100%; display: flex; flex-wrap: wrap;
+    gap: 15px; align-items: center; justify-content: space-between;
+    position: relative;
+}
+
+.btn {
+    font-family: var(--font-headers); font-size: 1rem; font-weight: 600;
+    padding: 13px 26px; border-radius: 50px; cursor: pointer;
+    border: none; display: inline-flex; align-items: center; justify-content: center;
+    user-select: none; white-space: nowrap;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--pink-glow), var(--purple-glow));
+    color: #fff;
+    box-shadow: 0 6px 20px rgba(255,117,160,0.35);
+    transition: transform 0.2s cubic-bezier(0.175,0.885,0.32,1.275), box-shadow 0.3s ease;
+}
+.btn-primary:hover { transform: translateY(-2px) scale(1.04); box-shadow: 0 8px 25px rgba(255,117,160,0.5), 0 0 15px rgba(181,107,250,0.3); }
+.btn-primary:active { transform: translateY(1px) scale(0.98); }
+
+.btn-glow { animation: buttonPulse 2s infinite; }
+@keyframes buttonPulse {
+    0%   { box-shadow: 0 6px 20px rgba(255,117,160,0.35); }
+    50%  { box-shadow: 0 6px 25px rgba(255,117,160,0.65), 0 0 15px rgba(181,107,250,0.4); }
+    100% { box-shadow: 0 6px 20px rgba(255,117,160,0.35); }
+}
+
+.btn-secondary {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: var(--text-secondary);
+    transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+}
+.btn-secondary:hover { background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.25); color: var(--text-primary); }
+
+/* "Ja" Zeile — statisch, nie bewegt */
+.yes-row {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
+    width: 100%;
+}
+
+/* ==========================================================================
+   PAGE 1 — Button Area (Fluchtzone für Nein + Vielleicht)
+   ========================================================================== */
+
+.button-area {
+    position: relative;
+    width: 420px;
+    height: 100px;
+    overflow: hidden;
+    border-radius: 14px;
+    margin-bottom: 4px;
+}
+
+/* ==========================================================================
+   Page 3: Emotional Message
+   ========================================================================== */
+
+.message-card { max-width: 520px; padding: 50px 40px; }
+
+.emotional-message-content {
+    display: flex; flex-direction: column; gap: 22px;
+    margin-bottom: 35px; text-align: center;
+}
+
+.msg-para { font-size: 1.12rem; line-height: 1.7; color: var(--text-secondary); font-weight: 400; }
+.msg-highlight {
+    font-family: var(--font-headers); font-size: 1.3rem; font-weight: 700;
+    color: #fff; padding: 5px 0;
+    text-shadow: 0 0 10px rgba(255,117,160,0.5);
+}
+
+/* ==========================================================================
+   Page 4: Response Panel
+   ========================================================================== */
+
+.response-panel {
+    display: none; width: 100%; flex-direction: column; align-items: center; margin-top: 15px;
+}
+.response-content { display: none; flex-direction: column; align-items: center; }
+.response-icon { font-size: 2.8rem; margin-bottom: 15px; animation: heartBeat 1.2s infinite; }
+.response-message {
+    font-family: var(--font-headers); font-size: 1.25rem; line-height: 1.5; font-weight: 600;
+    color: #fff; margin-bottom: 25px; text-shadow: 0 0 8px rgba(255,117,160,0.3);
+}
+
+.status-indicator {
+    display: flex; align-items: center; gap: 12px;
+    background: rgba(255,255,255,0.04); padding: 10px 20px;
+    border-radius: 30px; border: 1px solid rgba(255,255,255,0.08); margin-top: 10px;
+}
+.status-spinner {
+    width: 16px; height: 16px;
+    border: 2px solid rgba(255,255,255,0.2); border-top: 2px solid var(--pink-glow);
+    border-radius: 50%; animation: rotateSpinner 0.8s linear infinite;
+}
+.status-text { font-size: 0.9rem; color: var(--text-secondary); font-weight: 500; }
+
+.status-indicator.success { border-color: rgba(75,181,67,0.3); background: rgba(75,181,67,0.08); }
+.status-indicator.success .status-spinner { display: none; }
+.status-indicator.success .status-text { color: #4bb543; }
+.status-indicator.error { border-color: rgba(255,75,75,0.3); background: rgba(255,75,75,0.08); }
+.status-indicator.error .status-spinner { display: none; }
+.status-indicator.error .status-text { color: #ff4b4b; }
+
+@keyframes rotateSpinner { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+/* ==========================================================================
+   Animations
+   ========================================================================== */
+
+.animate-float { animation: floatItem 4s ease-in-out infinite alternate; }
+@keyframes floatItem { 0% { transform: translateY(0); } 100% { transform: translateY(-8px); } }
+
+.animate-scale-up { animation: scaleUp 0.6s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+@keyframes scaleUp { 0% { transform: scale(0.85); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+
+.animate-fade-up { opacity: 0; transform: translateY(15px); animation: fadeUp 1s cubic-bezier(0.25,1,0.5,1) forwards; }
+@keyframes fadeUp { 100% { opacity: 1; transform: translateY(0); } }
+
+/* FIX: opacity: 0 als Startzustand + forwards damit der Button sichtbar bleibt */
+.animate-fade-in { opacity: 0; animation: fadeIn 1s cubic-bezier(0.25,1,0.5,1) forwards; }
+@keyframes fadeIn { 0% { opacity: 0; } 100% { opacity: 1; } }
+
+@keyframes heartBeat {
+    0%  { transform: scale(1); }
+    14% { transform: scale(1.12); }
+    28% { transform: scale(1); }
+    42% { transform: scale(1.12); }
+    70% { transform: scale(1); }
+}
+
+/* ==========================================================================
+   Responsive — Mobile
+   ========================================================================== */
+
+@media (max-width: 480px) {
+    .glass-card { padding: 28px 18px; border-radius: 22px; }
+
+    .image-wrapper { width: 160px; height: 160px; margin-bottom: 18px; border-radius: 18px; }
+
+    .card-title { font-size: 1.4rem; margin-bottom: 18px; }
+
+    /* Mobile: Button-Area größer damit Buttons nicht aus der Card fallen */
+    .button-area {
+        width: 300px;
+        height: 140px; /* war 100px — zu wenig Platz auf Mobile! */
     }
 
-    // Fokus direkt auf das Eingabefeld
-    setTimeout(() => input.focus(), 300);
-})();
+    .message-card { padding: 32px 18px; }
+    .msg-para { font-size: 0.98rem; }
+    .msg-highlight { font-size: 1.1rem; }
+    .music-btn { padding: 8px 12px; }
 
-// ─── DATA STORE ───────────────────────────────────────────────────────────────
+    .btn { font-size: 0.92rem; padding: 11px 20px; }
 
-const answers = { vermisst: null, kontakt: null };
-
-// ─── EMAILJS CONFIG ───────────────────────────────────────────────────────────
-// ANLEITUNG: Ersetze diese Werte mit deinen echten EmailJS-Daten.
-// Registriere dich kostenlos auf https://www.emailjs.com/
-const EMAILJS_CONFIG = {
-    publicKey:  "YOUR_PUBLIC_KEY",    // ← Deinen Public Key hier eintragen
-    serviceId:  "YOUR_SERVICE_ID",    // ← Deine Service ID hier eintragen
-    templateId: "YOUR_TEMPLATE_ID",   // ← Deine Template ID hier eintragen
-    toEmail:    "saifanshino@gmail.com"
-};
-
-// =============================================================================
-// FLOATING CHERRY BLOSSOM PETALS — Canvas Engine
-// =============================================================================
-
-const canvas = document.getElementById("petals-canvas");
-const ctx    = canvas.getContext("2d");
-let petals   = [];
-
-function resizeCanvas() {
-    canvas.width  = window.innerWidth;
-    canvas.height = window.innerHeight;
-}
-window.addEventListener("resize", resizeCanvas);
-resizeCanvas();
-
-class Petal {
-    constructor(isBurst = false, originX = 0, originY = 0) {
-        this.isBurst = isBurst;
-        this.w = Math.random() * 8 + 6;
-        this.h = this.w * (Math.random() * 0.4 + 0.8);
-
-        if (isBurst) {
-            this.x = originX;
-            this.y = originY;
-            const angle = Math.random() * Math.PI * 2;
-            const force = Math.random() * 6 + 4;
-            this.speedX = Math.cos(angle) * force;
-            this.speedY = Math.sin(angle) * force;
-        } else {
-            this.x = Math.random() * canvas.width;
-            this.y = Math.random() * -canvas.height - 20;
-            this.speedX = Math.random() * 1.5 - 0.5;
-            this.speedY = Math.random() * 1.2 + 0.8;
-        }
-
-        this.rotation      = Math.random() * 360;
-        this.rotationSpeed = Math.random() * 2 - 1;
-        this.swaySpeed     = Math.random() * 0.02 + 0.005;
-        this.swayTime      = Math.random() * 100;
-        this.opacity       = Math.random() * 0.5 + 0.4;
-        this.hue           = Math.random() * 20 + 340;
-    }
-
-    update() {
-        if (this.isBurst) {
-            this.x += this.speedX;
-            this.y += this.speedY;
-            this.speedX *= 0.94;
-            this.speedY *= 0.94;
-            this.speedY += 0.05;
-            this.opacity -= 0.012;
-            this.rotation += this.rotationSpeed * 5;
-        } else {
-            this.y += this.speedY;
-            this.swayTime += this.swaySpeed;
-            this.x += this.speedX + Math.sin(this.swayTime) * 0.4;
-            this.rotation += this.rotationSpeed;
-        }
-    }
-
-    draw() {
-        if (this.opacity <= 0) return;
-        ctx.save();
-        ctx.translate(this.x, this.y);
-        ctx.rotate((this.rotation * Math.PI) / 180);
-        ctx.beginPath();
-        ctx.ellipse(0, 0, this.w / 2, this.h / 2, 0, 0, Math.PI * 2);
-        const grad = ctx.createRadialGradient(0, 0, 0, 0, 0, this.w);
-        grad.addColorStop(0, `hsla(${this.hue}, 100%, 88%, ${this.opacity})`);
-        grad.addColorStop(1, `hsla(${this.hue}, 95%, 75%, ${this.opacity * 0.6})`);
-        ctx.fillStyle = grad;
-        ctx.fill();
-        ctx.strokeStyle = `rgba(255,117,160,${this.opacity * 0.2})`;
-        ctx.lineWidth = 0.5;
-        ctx.stroke();
-        ctx.restore();
-    }
+    .ctrl-btn { width: 42px; height: 42px; }
+    .btn-play-pause { width: 52px; height: 52px; }
+    .player-controls { gap: 12px; }
+    .vol-slider::-webkit-slider-thumb { width: 18px; height: 18px; }
+    .vol-slider::-moz-range-thumb { width: 18px; height: 18px; }
 }
 
-for (let i = 0; i < 45; i++) petals.push(new Petal());
+/* ==========================================================================
+   PASSWORD GATE
+   ========================================================================== */
 
-function triggerFlowerBurst() {
-    const ox = canvas.width / 2, oy = canvas.height / 2;
-    for (let i = 0; i < 60; i++) petals.push(new Petal(true, ox, oy));
+.pw-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #0e0817, #170d27);
+    transition: opacity 0.7s ease, visibility 0.7s ease;
 }
 
-(function animate() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    for (let i = petals.length - 1; i >= 0; i--) {
-        petals[i].update();
-        petals[i].draw();
-        if (petals[i].isBurst && petals[i].opacity <= 0) { petals.splice(i, 1); continue; }
-        if (!petals[i].isBurst && (petals[i].y > canvas.height + 20 || petals[i].x < -20 || petals[i].x > canvas.width + 20)) {
-            petals[i] = new Petal();
-        }
-    }
-    requestAnimationFrame(animate);
-})();
-
-// =============================================================================
-// K-POP MUSIC PLAYER (NATIVE HTML5 AUDIO PLAYER FOR LOCAL PLAYLIST)
-// =============================================================================
-
-// Famous K-Pop playlist with local files and visual styling colors
-const KPOP_PLAYLIST = [
-    { title: "Chk Chk Boom", artist: "Stray Kids", src: "assets/Chk Chk Boom.m4a", grad: "linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)" },
-    { title: "Dynamite", artist: "BTS", src: "assets/Dynamite.m4a", grad: "linear-gradient(135deg, #f6d365 0%, #fda085 100%)" },
-    { title: "How You Like That", artist: "BLACKPINK", src: "assets/BLACKPINK.m4a", grad: "linear-gradient(135deg, #f43f5e 0%, #1e1b4b 100%)" },
-    { title: "Left and Right", artist: "Charlie Puth & Jung Kook", src: "assets/Charlie Puth.m4a", grad: "linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%)" },
-    { title: "Lose My Breath", artist: "Stray Kids & Charlie Puth", src: "assets/Lose My Breath.m4a", grad: "linear-gradient(135deg, #fecfef 0%, #ff75a0 100%)" },
-    { title: "K-Pop Megahit", artist: "BTS", src: "assets/BTS.m4a", grad: "linear-gradient(135deg, #a1c4fd 0%, #fda085 100%)" },
-    { title: "Special Hit", artist: "EXO", src: "assets/EXO.m4a", grad: "linear-gradient(135deg, #ec4899 0%, #fbcfe8 100%)" }
-];
-
-let currentTrackIndex = 0;
-let lastVolume = 50;
-let isSeeking = false;
-
-// DOM Elements
-const musicController   = document.getElementById("music-controller");
-const musicBtn          = document.getElementById("music-toggle-btn");
-const playerPanel       = document.getElementById("kpop-player-panel");
-const btnClosePlayer    = document.getElementById("btn-close-player");
-const playerVinyl       = document.getElementById("player-vinyl");
-const songTitleEl       = document.getElementById("player-song-title");
-const songArtistEl      = document.getElementById("player-song-artist");
-const ctrlPlay          = document.getElementById("ctrl-play");
-const ctrlPrev          = document.getElementById("ctrl-prev");
-const ctrlNext          = document.getElementById("ctrl-next");
-const ctrlSkipBack      = document.getElementById("ctrl-skip-back");
-const ctrlSkipForward   = document.getElementById("ctrl-skip-forward");
-const trackSlider       = document.getElementById("track-slider");
-const timeCurrentEl     = document.getElementById("time-current");
-const timeTotalEl       = document.getElementById("time-total");
-const volSlider         = document.getElementById("vol-slider");
-const playlistTrigger   = document.getElementById("playlist-trigger");
-const playlistMenu      = document.getElementById("playlist-menu");
-const badge             = document.getElementById("player-status-badge");
-
-// Initialize Native HTML5 Audio Object
-const audioPlayer = new Audio();
-audioPlayer.volume = lastVolume / 100;
-
-// Set default source to first track in playlist
-audioPlayer.src = KPOP_PLAYLIST[currentTrackIndex].src;
-
-// Helper to format seconds to M:SS
-function formatTime(secs) {
-    if (isNaN(secs) || secs === Infinity) return "0:00";
-    const minutes = Math.floor(secs / 60);
-    const seconds = Math.floor(secs % 60);
-    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+.pw-overlay.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
 }
 
-// Sync Audio Player state events to UI
-audioPlayer.addEventListener("play", () => {
-    musicController.classList.add("playing");
-    musicBtn.classList.add("playing");
-    ctrlPlay.querySelector(".play-icon").classList.add("hidden");
-    ctrlPlay.querySelector(".pause-icon").classList.remove("hidden");
-    if (badge) badge.innerText = "K-Pop läuft... 💿";
-});
-
-audioPlayer.addEventListener("pause", () => {
-    musicController.classList.remove("playing");
-    musicBtn.classList.remove("playing");
-    ctrlPlay.querySelector(".play-icon").classList.remove("hidden");
-    ctrlPlay.querySelector(".pause-icon").classList.add("hidden");
-    if (badge) badge.innerText = "Pausiert ⏸️";
-});
-
-audioPlayer.addEventListener("ended", () => {
-    playNextTrack();
-});
-
-audioPlayer.addEventListener("error", (e) => {
-    console.error("Local audio failed to load:", e);
-    if (badge) badge.innerText = "Ladefehler 🍂";
-});
-
-// Update progress bar and time code display as music plays
-audioPlayer.addEventListener("timeupdate", () => {
-    if (!isSeeking) {
-        const current = audioPlayer.currentTime;
-        const duration = audioPlayer.duration || 0;
-        if (duration > 0) {
-            trackSlider.value = (current / duration) * 100;
-        } else {
-            trackSlider.value = 0;
-        }
-        timeCurrentEl.innerText = formatTime(current);
-    }
-});
-
-// Sync duration when metadata/duration changes
-audioPlayer.addEventListener("loadedmetadata", () => {
-    timeTotalEl.innerText = formatTime(audioPlayer.duration || 0);
-});
-audioPlayer.addEventListener("durationchange", () => {
-    timeTotalEl.innerText = formatTime(audioPlayer.duration || 0);
-});
-
-// Initialize UI layout on load
-window.addEventListener("load", () => {
-    buildPlaylistMenu();
-    volSlider.value = lastVolume;
-    if (badge) badge.innerText = "K-Pop bereit! 🌸";
-});
-
-// unified playback functions
-function playMusic() {
-    audioPlayer.play().then(() => {
-        if (badge) badge.innerText = "K-Pop läuft... 💿";
-    }).catch((err) => {
-        console.warn("Autoplay blocked by browser. Awaiting user interaction.", err);
-        if (badge) badge.innerText = "Klick Play zum Starten 👆";
-    });
+.pw-card {
+    width: 90%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 50px 36px 40px;
+    animation: scaleUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 
-// 5 Seconds Skip backward / forward
-ctrlSkipBack.addEventListener("click", () => {
-    audioPlayer.currentTime = Math.max(0, audioPlayer.currentTime - 5);
-    if (!isSeeking) {
-        const duration = audioPlayer.duration || 0;
-        if (duration > 0) {
-            trackSlider.value = (audioPlayer.currentTime / duration) * 100;
-        }
-        timeCurrentEl.innerText = formatTime(audioPlayer.currentTime);
-    }
-});
-
-ctrlSkipForward.addEventListener("click", () => {
-    audioPlayer.currentTime = Math.min(audioPlayer.duration || 0, audioPlayer.currentTime + 5);
-    if (!isSeeking) {
-        const duration = audioPlayer.duration || 0;
-        if (duration > 0) {
-            trackSlider.value = (audioPlayer.currentTime / duration) * 100;
-        }
-        timeCurrentEl.innerText = formatTime(audioPlayer.currentTime);
-    }
-});
-
-function pauseMusic() {
-    audioPlayer.pause();
+.pw-flower {
+    font-size: 3rem;
+    margin-bottom: 16px;
+    filter: drop-shadow(0 0 12px rgba(255, 117, 160, 0.6));
+    animation: floatItem 3s ease-in-out infinite alternate;
 }
 
-function togglePlay() {
-    if (audioPlayer.paused) {
-        playMusic();
-    } else {
-        pauseMusic();
-    }
+.pw-title {
+    font-family: var(--font-headers);
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 8px;
+    text-align: center;
 }
 
-function playTrack(index) {
-    if (index < 0 || index >= KPOP_PLAYLIST.length) return;
-    currentTrackIndex = index;
-    const track = KPOP_PLAYLIST[index];
-
-    // Reset scrubber interface
-    isSeeking = false;
-    trackSlider.value = 0;
-    timeCurrentEl.innerText = "0:00";
-    timeTotalEl.innerText = "0:00";
-
-    // Update Player Details
-    songTitleEl.innerText = track.title;
-    songArtistEl.innerText = track.artist;
-
-    // Shift vinyl center cover gradient if vinyl exists
-    if (playerVinyl) {
-        const vinylCenter = playerVinyl.querySelector(".vinyl-center");
-        if (vinylCenter) {
-            vinylCenter.style.backgroundImage = track.grad;
-        }
-    }
-
-    // Refresh playlist active state in dropdown
-    const items = playlistMenu.querySelectorAll(".playlist-item");
-    items.forEach((item, idx) => {
-        if (idx === index) item.classList.add("active");
-        else item.classList.remove("active");
-    });
-
-    // Load and play track
-    audioPlayer.src = track.src;
-    playMusic();
+.pw-hint {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    margin-bottom: 28px;
+    text-align: center;
 }
 
-function playNextTrack() {
-    let nextIdx = currentTrackIndex + 1;
-    if (nextIdx >= KPOP_PLAYLIST.length) nextIdx = 0;
-    playTrack(nextIdx);
+.pw-input-wrap {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    align-items: center;
 }
 
-function playPrevTrack() {
-    let prevIdx = currentTrackIndex - 1;
-    if (prevIdx < 0) prevIdx = KPOP_PLAYLIST.length - 1;
-    playTrack(prevIdx);
+.pw-input {
+    flex: 1;
+    min-width: 0;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 117, 160, 0.25);
+    border-radius: 50px;
+    padding: 13px 20px;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    color: #fff;
+    outline: none;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-function playRandomTrack() {
-    const randomIdx = Math.floor(Math.random() * KPOP_PLAYLIST.length);
-    playTrack(randomIdx);
+.pw-input::placeholder { color: rgba(255, 255, 255, 0.3); }
+
+.pw-input:focus {
+    border-color: var(--pink-glow);
+    box-shadow: 0 0 12px rgba(255, 117, 160, 0.25);
 }
 
-// Event Listeners for UI
-musicBtn.addEventListener("click", (e) => {
-    e.stopPropagation();
-    playerPanel.classList.toggle("hidden");
-    
-    // Auto play if not already playing when opening the panel
-    if (audioPlayer.paused) {
-        playMusic();
-    }
-});
-
-btnClosePlayer.addEventListener("click", (e) => {
-    e.stopPropagation();
-    playerPanel.classList.add("hidden");
-});
-
-// Prevent panel clicks from closing it or propagating to the body
-playerPanel.addEventListener("click", (e) => {
-    e.stopPropagation();
-});
-
-ctrlPlay.addEventListener("click", togglePlay);
-ctrlPrev.addEventListener("click", playPrevTrack);
-ctrlNext.addEventListener("click", playNextTrack);
-
-// Volume Scrubbing
-volSlider.addEventListener("input", (e) => {
-    const vol = parseInt(e.target.value);
-    lastVolume = vol;
-    audioPlayer.volume = vol / 100;
-});
-
-// Track Progress Scrubber / Seekbar dragging
-trackSlider.addEventListener("input", (e) => {
-    isSeeking = true;
-    const pct = parseFloat(e.target.value) / 100;
-    const duration = audioPlayer.duration || 0;
-    timeCurrentEl.innerText = formatTime(pct * duration);
-});
-
-trackSlider.addEventListener("change", (e) => {
-    const pct = parseFloat(e.target.value) / 100;
-    const duration = audioPlayer.duration || 0;
-    audioPlayer.currentTime = pct * duration;
-    isSeeking = false;
-});
-
-playlistTrigger.addEventListener("click", () => {
-    playlistTrigger.classList.toggle("open");
-    playlistMenu.classList.toggle("hidden");
-});
-
-function buildPlaylistMenu() {
-    playlistMenu.innerHTML = "";
-    KPOP_PLAYLIST.forEach((track, index) => {
-        const li = document.createElement("li");
-        li.className = `playlist-item ${index === currentTrackIndex ? 'active' : ''}`;
-        li.innerHTML = `
-            <span class="song-name">${track.title}</span>
-            <span class="song-artist">${track.artist}</span>
-        `;
-        li.addEventListener("click", () => {
-            playTrack(index);
-            playlistMenu.classList.add("hidden");
-            playlistTrigger.classList.remove("open");
-        });
-        playlistMenu.appendChild(li);
-    });
+.pw-input.shake {
+    animation: shake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+    border-color: #ff4b4b;
+    box-shadow: 0 0 12px rgba(255, 75, 75, 0.3);
 }
 
-// Global user interaction tracker for browser autoplay policy
-document.body.addEventListener("click", () => {
-    if (audioPlayer.paused) {
-        playMusic();
-    }
-}, { once: true });
-
-// =============================================================================
-// PAGE TRANSITIONS
-// =============================================================================
-
-function goToPage(fromId, toId) {
-    const from = document.getElementById(fromId);
-    const to   = document.getElementById(toId);
-    if (!from || !to) return;
-
-    from.classList.add("fade-out");
-    setTimeout(() => {
-        from.classList.remove("active", "fade-out");
-        to.classList.add("active");
-        if (toId === "page-4") {
-            document.getElementById("bg-final").style.opacity = "1";
-        }
-    }, 600);
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%       { transform: translateX(-8px); }
+    40%       { transform: translateX(8px); }
+    60%       { transform: translateX(-5px); }
+    80%       { transform: translateX(5px); }
 }
 
-// =============================================================================
-// EVADING BUTTONS — Nein & Vielleicht
-//
-// Strategie:
-//   1. "Ja" ist AUSSERHALB der button-area → wird nie angetastet
-//   2. button-area hat overflow:hidden → physische Grenze
-//   3. Positionen werden NUR mit area.clientWidth/clientHeight berechnet
-// =============================================================================
-
-const buttonArea  = document.getElementById("page-1-button-area");
-const evadingBtns = document.querySelectorAll(".btn-evade"); // nur Nein + Vielleicht
-
-window.addEventListener("load", () => {
-    // Hole Größe der Area
-    const areaW = buttonArea.clientWidth;   // z.B. 420
-    const areaH = buttonArea.clientHeight;  // z.B. 100
-
-    evadingBtns.forEach((btn, index) => {
-        // Fixiere Größe bevor wir auf absolute umschalten
-        const w = btn.offsetWidth;
-        const h = btn.offsetHeight;
-        btn.style.width    = w + "px";
-        btn.style.height   = h + "px";
-        btn.style.position = "absolute";
-        btn.style.margin   = "0";
-        btn.style.zIndex   = "5";
-        btn.style.transition = "left 0.22s cubic-bezier(0.25, 0.8, 0.25, 1), top 0.22s cubic-bezier(0.25, 0.8, 0.25, 1)";
-
-        // Startpositionen: Nein links, Vielleicht rechts — unten in der Box
-        // So überlappen sie sich NIE beim Start
-        const startY = areaH - h - 8;
-        if (index === 0) {
-            // Nein → linke Seite
-            btn.style.left = "8px";
-            btn.style.top  = startY + "px";
-        } else {
-            // Vielleicht → rechte Seite
-            btn.style.left = (areaW - w - 8) + "px";
-            btn.style.top  = startY + "px";
-        }
-    });
-});
-
-// Ausweichfunktion — berechnet NUR innerhalb der button-area
-function moveButtonAway(btn) {
-    const areaW = buttonArea.clientWidth;
-    const areaH = buttonArea.clientHeight;
-    const btnW  = btn.offsetWidth;
-    const btnH  = btn.offsetHeight;
-
-    // maxX/maxY garantieren: Button bleibt vollständig innerhalb
-    const maxX = Math.max(0, areaW - btnW);
-    const maxY = Math.max(0, areaH - btnH);
-
-    btn.style.left = (Math.random() * maxX) + "px";
-    btn.style.top  = (Math.random() * maxY) + "px";
+.pw-submit-btn {
+    flex-shrink: 0;
+    white-space: nowrap;
+    padding: 13px 22px;
 }
 
-// Event Listener für Desktop (hover) und Mobile (touch)
-evadingBtns.forEach(btn => {
-    btn.addEventListener("mouseenter", () => moveButtonAway(btn));
-    btn.addEventListener("mousemove",  () => moveButtonAway(btn));
-    btn.addEventListener("touchstart", (e) => {
-        if (e.cancelable) {
-            e.preventDefault();
-        }
-        moveButtonAway(btn);
-    }, { passive: false });
-});
-
-// Resize boundary guardian - adapts button positions dynamically to new area dimensions (e.g. rotation)
-window.addEventListener("resize", () => {
-    const areaW = buttonArea.clientWidth;
-    const areaH = buttonArea.clientHeight;
-
-    evadingBtns.forEach(btn => {
-        const w = btn.offsetWidth;
-        const h = btn.offsetHeight;
-        const currentLeft = parseFloat(btn.style.left) || 0;
-        const currentTop  = parseFloat(btn.style.top) || 0;
-
-        const maxX = Math.max(0, areaW - w);
-        const maxY = Math.max(0, areaH - h);
-
-        // Clamping current coordinates within the new boundary limits
-        if (currentLeft > maxX) {
-            btn.style.left = maxX + "px";
-        }
-        if (currentTop > maxY) {
-            btn.style.top = maxY + "px";
-        }
-    });
-});
-
-// =============================================================================
-// BUTTON CLICK ROUTING
-// =============================================================================
-
-// Page 1 — Ja
-document.getElementById("btn-yes-1").addEventListener("click", () => {
-    answers.vermisst = "Ja";
-    playMusic();
-    goToPage("page-1", "page-2");
-});
-
-// Page 2 — Weiter
-document.getElementById("btn-next-2").addEventListener("click", () => {
-    goToPage("page-2", "page-3");
-});
-
-// Page 3 — Okay
-document.getElementById("btn-next-3").addEventListener("click", () => {
-    goToPage("page-3", "page-4");
-});
-
-// Page 4 — Ja / Nein
-document.getElementById("btn-yes-4").addEventListener("click", () => {
-    answers.kontakt = "Ja";
-    showPage4Response("Ja");
-});
-document.getElementById("btn-no-4").addEventListener("click", () => {
-    answers.kontakt = "Nein";
-    showPage4Response("Nein");
-});
-
-function showPage4Response(choice) {
-    document.getElementById("decision-buttons").style.display = "none";
-    const panel = document.getElementById("response-panel");
-    panel.style.display = "flex";
-
-    if (choice === "Ja") {
-        document.getElementById("response-content-yes").style.display = "flex";
-        triggerFlowerBurst();
-    } else {
-        document.getElementById("response-content-no").style.display = "flex";
-    }
-    sendResponses();
+.pw-error {
+    margin-top: 14px;
+    font-size: 0.9rem;
+    color: #ff7070;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    min-height: 20px;
 }
+.pw-error.visible { opacity: 1; }
 
-// =============================================================================
-// EMAILJS — Antworten senden
-// =============================================================================
-
-function sendResponses() {
-    const indicator = document.getElementById("status-indicator");
-
-    // Noch nicht konfiguriert → Demo-Modus
-    if (
-        EMAILJS_CONFIG.publicKey  === "YOUR_PUBLIC_KEY"  ||
-        EMAILJS_CONFIG.serviceId  === "YOUR_SERVICE_ID"  ||
-        EMAILJS_CONFIG.templateId === "YOUR_TEMPLATE_ID"
-    ) {
-        console.warn("⚠️ EmailJS noch nicht konfiguriert. Demo-Modus.\nAntworten:", answers);
-        setTimeout(() => {
-            indicator.classList.add("success");
-            indicator.querySelector(".status-text").innerText =
-                "Antworten gespeichert! 🌸 (EmailJS bereit zum Einrichten)";
-        }, 1500);
-        return;
-    }
-
-    emailjs.init({ publicKey: EMAILJS_CONFIG.publicKey });
-    emailjs.send(EMAILJS_CONFIG.serviceId, EMAILJS_CONFIG.templateId, {
-        to_email:         EMAILJS_CONFIG.toEmail,
-        vermisst_antwort: answers.vermisst,
-        kontakt_antwort:  answers.kontakt,
-        timestamp:        new Date().toLocaleString("de-DE")
-    }).then(() => {
-        indicator.classList.add("success");
-        indicator.querySelector(".status-text").innerText = "Nachricht gesendet! 🌸";
-    }).catch((err) => {
-        console.error("EmailJS Fehler:", err);
-        indicator.classList.add("error");
-        indicator.querySelector(".status-text").innerText = "Senden fehlgeschlagen.";
-    });
+@media (max-width: 480px) {
+    .pw-card { padding: 36px 20px 30px; }
+    .pw-input-wrap { flex-direction: column; }
+    .pw-input, .pw-submit-btn { width: 100%; }
+    .pw-title { font-size: 1.35rem; }
 }
