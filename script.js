@@ -26,6 +26,11 @@ const SITE_PASSWORD = "SKY";      // ← DEIN PASSWORT
             overlay.classList.add("hidden");
             errorEl.classList.remove("visible");
             playRandomTrack();
+
+            // Interaktions-Fallback registrieren, falls das erste Abspielen durch Autoplay blockiert wurde
+            document.body.addEventListener("click", () => {
+                if (audioPlayer.paused) playMusic();
+            }, { once: true });
         } else {
             input.classList.remove("shake");
             requestAnimationFrame(() => {
@@ -159,13 +164,14 @@ function triggerFlowerBurst() {
 // =============================================================================
 
 const KPOP_PLAYLIST = [
-    { title: "Chk Chk Boom",       artist: "Stray Kids",                    src: "assets/Chk Chk Boom.m4a",   grad: "linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)" },
-    { title: "Dynamite",            artist: "BTS",                           src: "assets/Dynamite.m4a",        grad: "linear-gradient(135deg, #f6d365 0%, #fda085 100%)" },
-    { title: "How You Like That",   artist: "BLACKPINK",                     src: "assets/BLACKPINK.m4a",       grad: "linear-gradient(135deg, #f43f5e 0%, #1e1b4b 100%)" },
-    { title: "Left and Right",      artist: "Charlie Puth & Jung Kook",      src: "assets/Charlie Puth.m4a",    grad: "linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%)" },
-    { title: "Lose My Breath",      artist: "Stray Kids & Charlie Puth",     src: "assets/Lose My Breath.m4a", grad: "linear-gradient(135deg, #fecfef 0%, #ff75a0 100%)" },
-    { title: "K-Pop Megahit",       artist: "BTS",                           src: "assets/BTS.m4a",             grad: "linear-gradient(135deg, #a1c4fd 0%, #fda085 100%)" },
-    { title: "Special Hit",         artist: "EXO",                           src: "assets/EXO.m4a",             grad: "linear-gradient(135deg, #ec4899 0%, #fbcfe8 100%)" }
+    { title: "Chk Chk Boom",          artist: "Stray Kids",                    src: "assets/Chk Chk Boom.m4a",         grad: "linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)" },
+    { title: "Dynamite",              artist: "BTS",                           src: "assets/Dynamite.m4a",              grad: "linear-gradient(135deg, #f6d365 0%, #fda085 100%)" },
+    { title: "How You Like That",      artist: "BLACKPINK",                     src: "assets/BLACKPINK.m4a",             grad: "linear-gradient(135deg, #f43f5e 0%, #1e1b4b 100%)" },
+    { title: "Left and Right",         artist: "Charlie Puth & Jung Kook",      src: "assets/Charlie Puth.m4a",          grad: "linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%)" },
+    { title: "Lose My Breath",         artist: "Stray Kids & Charlie Puth",     src: "assets/Lose My Breath.m4a",       grad: "linear-gradient(135deg, #fecfef 0%, #ff75a0 100%)" },
+    { title: "Standing Next to You",   artist: "Jung Kook",                     src: "assets/Standing Next to You.m4a",  grad: "linear-gradient(135deg, #a1c4fd 0%, #fbcfe8 100%)" },
+    { title: "K-Pop Megahit",          artist: "BTS",                           src: "assets/BTS.m4a",                   grad: "linear-gradient(135deg, #a1c4fd 0%, #fda085 100%)" },
+    { title: "Special Hit",            artist: "EXO",                           src: "assets/EXO.m4a",                   grad: "linear-gradient(135deg, #ec4899 0%, #fbcfe8 100%)" }
 ];
 
 let currentTrackIndex = 0;
@@ -372,9 +378,7 @@ function buildPlaylistMenu() {
     });
 }
 
-document.body.addEventListener("click", () => {
-    if (audioPlayer.paused) playMusic();
-}, { once: true });
+// (Der globale Dokumenten-Click-Listener wurde entfernt, die Musik startet erst nach erfolgreichem Login!)
 
 // =============================================================================
 // PAGE TRANSITIONS
