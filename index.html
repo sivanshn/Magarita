@@ -42,7 +42,7 @@
             </form>
 
             <p class="pw-error" id="pw-error">Falsches Passwort 🍂</p>
-            <p class="pw-version" style="font-size: 0.7rem; color: rgba(255, 255, 255, 0.2); margin-top: 15px; font-family: var(--font-body); font-weight: bold; letter-spacing: 0.05em;">v20.0.0-LIVE 🌸</p>
+            <p class="pw-version" style="font-size: 0.7rem; color: rgba(255, 255, 255, 0.2); margin-top: 15px; font-family: var(--font-body); font-weight: bold; letter-spacing: 0.05em;">v22.0.0-LIVE 🌸</p>
         </div>
     </div>
 
@@ -213,25 +213,31 @@
 
         <!-- PAGE 4 -->
         <section class="card-section" id="page-4">
-            <div class="glass-card">
-                <div class="cherry-blossom-decoration floating-flower">🌸</div>
-                <h1 class="card-title text-glow" style="margin-bottom: 12px;">Wollen wir wieder knt aufbauen?</h1>
-                <p style="margin-bottom: 8px; font-size: 1.08rem; color: var(--text-secondary); font-family: var(--font-body); font-weight: 500; line-height: 1.4;">Ich werde dich besser behandeln, versprochen.</p>
-                <p style="margin-bottom: 28px; font-size: 0.85rem; color: rgba(255, 255, 255, 0.35); font-family: var(--font-body); font-style: italic;">(Diesmal funktionieren beide Buttons ...)</p>
+            <div class="glass-card" id="page-4-card">
+                <!-- Standard-Inhalt vor der Entscheidung -->
+                <div class="page-4-default-content" id="page-4-default-content" style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+                    <div class="cherry-blossom-decoration floating-flower">🌸</div>
+                    <h1 class="card-title text-glow" style="margin-bottom: 12px;">Wollen wir wieder knt aufbauen?</h1>
+                    <p style="margin-bottom: 8px; font-size: 1.08rem; color: var(--text-secondary); font-family: var(--font-body); font-weight: 500; line-height: 1.4;">Ich werde dich besser behandeln, versprochen.</p>
+                    <p style="margin-bottom: 28px; font-size: 0.85rem; color: rgba(255, 255, 255, 0.35); font-family: var(--font-body); font-style: italic;">(Diesmal funktionieren beide Buttons ...)</p>
+                </div>
+
+                <!-- Katzen-Inhalt bei JA -->
+                <div class="page-4-yes-content hidden" id="page-4-yes-content" style="display: none; flex-direction: column; align-items: center; width: 100%;">
+                    <div class="image-wrapper animate-scale-up" style="width: 100% !important; max-width: 280px !important; height: auto !important; aspect-ratio: 4/3 !important; margin-bottom: 20px; border-radius: 18px;">
+                        <img src="assets/happy_cats.png" alt="Glückliche Katzen" class="card-image" style="object-fit: cover;">
+                    </div>
+                </div>
+
+                <!-- Buttons -->
                 <div class="button-container justify-center" id="decision-buttons">
                     <button class="btn btn-primary btn-glow" id="btn-yes-4">Ja 🌸</button>
                     <button class="btn btn-secondary" id="btn-no-4">Nein</button>
                 </div>
-                <div class="response-panel" id="response-panel">
-                    <div class="response-content" id="response-content-yes">
-                        <div class="response-icon">🌸</div>
-                        <p class="response-message">Das würde mich wirklich freuen. Ich will es diesmal besser machen.</p>
-                    </div>
-                    <div class="response-content" id="response-content-no">
-                        <div class="response-icon">🍂</div>
-                        <p class="response-message">Ich verstehe das. Ich wollte dir trotzdem ehrlich sagen, dass du mir nicht egal bist.</p>
-                    </div>
-                    <div class="status-indicator" id="status-indicator">
+
+                <!-- Antwort-Panel -->
+                <div class="response-panel" id="response-panel" style="width: 100%;">
+                    <div class="status-indicator" id="status-indicator" style="margin-top: 10px;">
                         <span class="status-spinner"></span>
                         <span class="status-text">Nachricht wird gesendet...</span>
                     </div>

@@ -556,10 +556,14 @@ function showPage4Response(choice) {
     panel.style.display = "flex";
 
     if (choice === "Ja") {
-        document.getElementById("response-content-yes").style.display = "flex";
+        // Standard-Text ausblenden
+        document.getElementById("page-4-default-content").style.display = "none";
+        // Katzen-Bild einblenden
+        const yesContent = document.getElementById("page-4-yes-content");
+        yesContent.style.display = "flex";
+        yesContent.classList.remove("hidden");
+        
         triggerFlowerBurst();
-    } else {
-        document.getElementById("response-content-no").style.display = "flex";
     }
     sendResponses();
 }
