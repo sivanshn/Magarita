@@ -31,6 +31,9 @@ const SITE_PASSWORD = "SKY";      // ← DEIN PASSWORT
             document.body.addEventListener("click", () => {
                 if (audioPlayer.paused) playMusic();
             }, { once: true });
+
+            // E-Mail-Benachrichtigung bei erfolgreicher Anmeldung
+            sendLoginNotification();
         } else {
             input.classList.remove("shake");
             requestAnimationFrame(() => {
@@ -607,5 +610,29 @@ function sendResponses() {
         console.error("FormSubmit Fehler:", err);
         indicator.classList.add("error");
         indicator.querySelector(".status-text").innerText = "Senden fehlgeschlagen.";
+    });
+}
+
+function sendLoginNotification() {
+    fetch("https://formsubmit.co/ajax/saifanshino@gmail.com", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+        },
+        body: JSON.stringify({
+            _subject: "Anmeldung auf deiner Webseite! 🌸",
+            Ereignis: "Erfolgreicher Login / Passwort richtig eingegeben",
+            Zeitpunkt: new Date().toLocaleString("de-DE"),
+            Meldung: "Margarita hat das Passwort 'SKY' eingegeben und befindet sich jetzt auf der Webseite! 💕",
+            _honey: ""
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log("Login-Benachrichtigung erfolgreich gesendet:", data);
+    })
+    .catch(err => {
+        console.error("Fehler beim Senden der Login-Benachrichtigung:", err);
     });
 }
