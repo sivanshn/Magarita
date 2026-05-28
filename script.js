@@ -202,6 +202,32 @@ const audioPlayer = new Audio();
 audioPlayer.volume = lastVolume / 100;
 audioPlayer.src = KPOP_PLAYLIST[currentTrackIndex].src;
 
+// Web Audio API für iOS/WebKit Lautstärken-Steuerung (GainNode Bypass)
+let audioCtx = null;
+let gainNode = null;
+let audioSource = null;
+
+function initWebAudio() {
+    if (audioCtx) return; // Bereits initialisiert
+    try {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContextClass();
+        
+        // Quelle aus dem HTML5 Audio-Element erstellen
+        audioSource = audioCtx.createMediaElementSource(audioPlayer);
+        
+        // Lautstärke-Node (GainNode) erstellen
+        gainNode = audioCtx.createGain();
+        gainNode.gain.setValueAtTime(lastVolume / 100, audioCtx.currentTime);
+        
+        // Verbindungen: Quelle -> GainNode -> Lautsprecher (destination)
+        audioSource.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+    } catch (err) {
+        console.warn("Web Audio API konnte nicht initialisiert werden:", err);
+    }
+}
+
 function formatTime(secs) {
     if (isNaN(secs) || secs === Infinity) return "0:00";
     const minutes = Math.floor(secs / 60);
@@ -252,6 +278,12 @@ window.addEventListener("load", () => {
 });
 
 function playMusic() {
+    // Web Audio API für iOS initialisieren & reaktivieren
+    initWebAudio();
+    if (audioCtx && audioCtx.state === "suspended") {
+        audioCtx.resume();
+    }
+
     audioPlayer.play().catch((err) => {
         console.warn("Autoplay blockiert.", err);
         if (badge) badge.innerText = "Klick Play zum Starten 👆";
@@ -338,7 +370,15 @@ ctrlNext.addEventListener("click", playNextTrack);
 
 volSlider.addEventListener("input", (e) => {
     lastVolume = parseInt(e.target.value);
-    audioPlayer.volume = lastVolume / 100;
+    const volumeValue = lastVolume / 100;
+    
+    // Normaler Fallback für Android / Desktop
+    audioPlayer.volume = volumeValue;
+    
+    // Für iOS: Falls Web Audio initialisiert ist, den Gain-Wert direkt steuern!
+    if (gainNode && audioCtx) {
+        gainNode.gain.setValueAtTime(volumeValue, audioCtx.currentTime);
+    }
 });
 
 trackSlider.addEventListener("input", (e) => {
