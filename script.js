@@ -402,20 +402,50 @@ function goToPage(fromId, toId) {
 const buttonArea  = document.getElementById("page-1-button-area");
 const evadingBtns = document.querySelectorAll(".btn-evade");
 
+function initializeButtonsAbsolute() {
+    const parentRect = buttonArea.getBoundingClientRect();
+    const coords = [];
+
+    // 1. Zuerst alle Positionen im ungestörten Flex-Layout auslesen
+    evadingBtns.forEach(btn => {
+        if (btn.style.position !== "absolute") {
+            const w = btn.offsetWidth;
+            const h = btn.offsetHeight;
+            const rect = btn.getBoundingClientRect();
+            coords.push({
+                btn: btn,
+                w: w,
+                h: h,
+                leftOffset: rect.left - parentRect.left,
+                topOffset: rect.top - parentRect.top
+            });
+        }
+    });
+
+    // 2. Erst danach alle Buttons absolut setzen (verhindert Verschieben während der Schleife)
+    coords.forEach(c => {
+        c.btn.style.transition = "none";
+        c.btn.style.width    = c.w + "px";
+        c.btn.style.height   = c.h + "px";
+        c.btn.style.left     = c.leftOffset + "px";
+        c.btn.style.top      = c.topOffset + "px";
+        c.btn.style.position = "absolute";
+        c.btn.style.margin   = "0";
+        c.btn.style.zIndex   = "5";
+    });
+
+    // 3. Flex-Layout deaktivieren, damit absolute Positionierung absolut sauber greift
+    buttonArea.style.display = "block";
+}
+
 function moveButtonAway(btn) {
     const areaW = buttonArea.clientWidth;
     const areaH = buttonArea.clientHeight;
 
-    // Dynamische Absolute-Zuweisung erst beim ERSTEN Hover/Touchstart!
-    // Dadurch werden Überlappungen beim Laden auf Mobilgeräten zu 100 % verhindert.
+    // Beide Buttons gleichzeitig absolut fixieren beim allerersten Kontakt,
+    // um ein unschönes Verschieben des anderen Buttons zu verhindern!
     if (btn.style.position !== "absolute") {
-        const w = btn.offsetWidth;
-        const h = btn.offsetHeight;
-        btn.style.width    = w + "px";
-        btn.style.height   = h + "px";
-        btn.style.position = "absolute";
-        btn.style.margin   = "0";
-        btn.style.zIndex   = "5";
+        initializeButtonsAbsolute();
     }
 
     const btnW  = btn.offsetWidth;
