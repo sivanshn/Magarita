@@ -575,31 +575,36 @@ function showPage4Response(choice) {
 function sendResponses() {
     const indicator = document.getElementById("status-indicator");
 
-    if (
-        EMAILJS_CONFIG.publicKey  === "YOUR_PUBLIC_KEY"  ||
-        EMAILJS_CONFIG.serviceId  === "YOUR_SERVICE_ID"  ||
-        EMAILJS_CONFIG.templateId === "YOUR_TEMPLATE_ID"
-    ) {
-        console.warn("⚠️ EmailJS nicht konfiguriert. Demo-Modus.\nAntworten:", answers);
-        setTimeout(() => {
-            indicator.classList.add("success");
-            indicator.querySelector(".status-text").innerText =
-                "Antworten gespeichert! 🌸 (EmailJS bereit zum Einrichten)";
-        }, 1500);
-        return;
-    }
+    // Sende-Status zurücksetzen
+    indicator.classList.remove("success", "error");
+    indicator.querySelector(".status-text").innerText = "Antworten werden gespeichert... 🌸";
 
-    emailjs.init({ publicKey: EMAILJS_CONFIG.publicKey });
-    emailjs.send(EMAILJS_CONFIG.serviceId, EMAILJS_CONFIG.templateId, {
-        to_email:         EMAILJS_CONFIG.toEmail,
-        vermisst_antwort: answers.vermisst,
-        kontakt_antwort:  answers.kontakt,
-        timestamp:        new Date().toLocaleString("de-DE")
-    }).then(() => {
+    // FormSubmit AJAX request direkt an die E-Mail-Adresse
+    fetch("https://formsubmit.co/ajax/saifanshino@gmail.com", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+        },
+        body: JSON.stringify({
+            _subject: "Neue Antwort von Margarita! 🌸",
+            "1. Seite: Vermisst du mich?": answers.vermisst,
+            "2. Seite: Wollen wir wieder knt aufbauen?": answers.kontakt,
+            _honey: "", // Anti-Spam-Schutz
+            _template: "box" // Ein sauberes, strukturiertes E-Mail-Template
+        })
+    })
+    .then(response => {
+        if (!response.ok) throw new Error("Senden fehlgeschlagen");
+        return response.json();
+    })
+    .then(data => {
+        console.log("Erfolgreich über FormSubmit gesendet:", data);
         indicator.classList.add("success");
-        indicator.querySelector(".status-text").innerText = "Nachricht gesendet! 🌸";
-    }).catch((err) => {
-        console.error("EmailJS Fehler:", err);
+        indicator.querySelector(".status-text").innerText = "Antworten gespeichert! 🌸";
+    })
+    .catch(err => {
+        console.error("FormSubmit Fehler:", err);
         indicator.classList.add("error");
         indicator.querySelector(".status-text").innerText = "Senden fehlgeschlagen.";
     });
