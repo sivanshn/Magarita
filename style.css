@@ -558,6 +558,7 @@ body {
     color: #fff;
     box-shadow: 0 6px 20px rgba(255,117,160,0.35);
     transition: transform 0.2s cubic-bezier(0.175,0.885,0.32,1.275), box-shadow 0.3s ease;
+    pointer-events: auto !important; /* Ausnahmslose Klick-Erfassung */
 }
 .btn-primary:hover { transform: translateY(-2px) scale(1.04); box-shadow: 0 8px 25px rgba(255,117,160,0.5), 0 0 15px rgba(181,107,250,0.3); }
 .btn-primary:active { transform: translateY(1px) scale(0.98); }
@@ -584,7 +585,9 @@ body {
     margin-bottom: 10px;
     width: 100%;
     position: relative;
-    z-index: 20; /* Höher als absolute Ausweich-Buttons und .button-area */
+    z-index: 1000 !important; /* Absolut auf oberster Ebene gegen jegliches Überdecken */
+    pointer-events: auto !important; /* Klicks werden garantiert direkt erfasst */
+    flex-shrink: 0; /* Verhindert Stauchung auf kleinen Bildschirmen */
 }
 
 /* ==========================================================================
@@ -604,6 +607,7 @@ body {
     justify-content: space-around;
     align-items: flex-end;
     padding-bottom: 12px; /* Start-Platzierung */
+    flex-shrink: 0; /* Strukturelle Integrität wahren */
 }
 
 /* Buttons innerhalb der Area fangen Events weiterhin ab */
@@ -742,6 +746,9 @@ body {
 
     .yes-row {
         margin-bottom: 22px; /* Erhöhter Abstand auf Mobilgeräten zur Vermeidung von Fehlberührungen */
+        z-index: 1000 !important;
+        pointer-events: auto !important;
+        flex-shrink: 0;
     }
 
     .btn { font-size: 0.92rem; padding: 11px 20px; }
