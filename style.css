@@ -371,7 +371,6 @@ body {
     outline: none;
     transition: background 0.3s;
     cursor: pointer;
-    touch-action: none;
 }
 .vol-slider::-webkit-slider-thumb {
     -webkit-appearance: none;
