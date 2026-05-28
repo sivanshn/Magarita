@@ -402,11 +402,13 @@ function goToPage(fromId, toId) {
 const buttonArea  = document.getElementById("page-1-button-area");
 const evadingBtns = document.querySelectorAll(".btn-evade");
 
-window.addEventListener("load", () => {
+function moveButtonAway(btn) {
     const areaW = buttonArea.clientWidth;
     const areaH = buttonArea.clientHeight;
 
-    evadingBtns.forEach((btn, index) => {
+    // Dynamische Absolute-Zuweisung erst beim ERSTEN Hover/Touchstart!
+    // Dadurch werden Überlappungen beim Laden auf Mobilgeräten zu 100 % verhindert.
+    if (btn.style.position !== "absolute") {
         const w = btn.offsetWidth;
         const h = btn.offsetHeight;
         btn.style.width    = w + "px";
@@ -414,22 +416,8 @@ window.addEventListener("load", () => {
         btn.style.position = "absolute";
         btn.style.margin   = "0";
         btn.style.zIndex   = "5";
-        btn.style.transition = "left 0.22s cubic-bezier(0.25, 0.8, 0.25, 1), top 0.22s cubic-bezier(0.25, 0.8, 0.25, 1)";
+    }
 
-        const startY = areaH - h - 8;
-        if (index === 0) {
-            btn.style.left = "8px";
-            btn.style.top  = startY + "px";
-        } else {
-            btn.style.left = (areaW - w - 8) + "px";
-            btn.style.top  = startY + "px";
-        }
-    });
-});
-
-function moveButtonAway(btn) {
-    const areaW = buttonArea.clientWidth;
-    const areaH = buttonArea.clientHeight;
     const btnW  = btn.offsetWidth;
     const btnH  = btn.offsetHeight;
 

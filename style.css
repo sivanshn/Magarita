@@ -54,8 +54,10 @@ body {
 
 .glow-bg-orb {
     position: absolute; border-radius: 50%;
+    -webkit-filter: blur(100px);
     filter: blur(100px); opacity: 0.15; z-index: 0; pointer-events: none;
     animation: floatOrb 20s infinite alternate ease-in-out;
+    will-change: filter, transform;
 }
 .orb-1 { width: 300px; height: 300px; background-color: var(--pink-glow); top: 15%; left: 10%; }
 .orb-2 { width: 400px; height: 400px; background-color: var(--purple-glow); bottom: 10%; right: 5%; animation-delay: -5s; }
@@ -103,6 +105,7 @@ body {
     border-radius: 50px;
     color: var(--text-primary);
     cursor: pointer;
+    -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
     transition: all 0.3s ease;
     box-shadow: 0 4px 15px rgba(0,0,0,0.2);
@@ -433,6 +436,7 @@ body {
     list-style: none;
     padding: 6px;
     z-index: 120;
+    -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
 }
 .playlist-menu.hidden { display: none; }
@@ -541,6 +545,7 @@ body {
 
 .cherry-blossom-decoration {
     font-size: 2.2rem; margin-bottom: 15px;
+    -webkit-filter: drop-shadow(0 0 8px rgba(255,117,160,0.5));
     filter: drop-shadow(0 0 8px rgba(255,117,160,0.5));
 }
 .floating-flower { animation: floatItem 3s ease-in-out infinite alternate; }
@@ -609,6 +614,10 @@ body {
     border-radius: 14px;
     margin-bottom: 4px;
     pointer-events: none; /* Erlaubt Klicks durch die leere Fläche des Spielfelds */
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-end;
+    padding-bottom: 12px; /* Start-Platzierung */
 }
 
 /* Buttons innerhalb der Area fangen Events weiterhin ab */
@@ -806,6 +815,7 @@ body {
 .pw-flower {
     font-size: 3rem;
     margin-bottom: 16px;
+    -webkit-filter: drop-shadow(0 0 12px rgba(255, 117, 160, 0.6));
     filter: drop-shadow(0 0 12px rgba(255, 117, 160, 0.6));
     animation: floatItem 3s ease-in-out infinite alternate;
 }
